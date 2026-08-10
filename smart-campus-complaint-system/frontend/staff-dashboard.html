@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard | Smart Campus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        .dashboard-grid { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 64px); }
+        .sidebar { background-color: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1rem; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-link { padding: 0.75rem 1rem; border-radius: var(--radius); color: var(--text-muted); font-weight: 500; text-decoration: none; }
+        .sidebar-link:hover, .sidebar-link.active { background-color: var(--primary-light); color: var(--primary); }
+        .main-content { padding: 2rem; background-color: var(--background); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; text-align: center; }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+        
+        .filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 0.4rem 1rem; border: 1.5px solid var(--border);
+            border-radius: 999px; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; background: var(--surface); color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .filter-btn.active, .filter-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(10,110,189,0.07); }
+        
+        .complaint-list { display: flex; flex-direction: column; gap: 1rem; }
+        .complaint-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: var(--transition);
+        }
+        .complaint-card:hover { box-shadow: 0 4px 16px rgba(10,110,189,0.1); border-color: rgba(10,110,189,0.3); }
+        .cc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
+        .cc-number { font-size: 0.82rem; font-weight: 600; color: var(--primary); }
+        .cc-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .cc-desc { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-main); }
+        .cc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem; }
+        .badge { padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); font-size: 0.95rem; }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        
+        /* Modal Style */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; overflow: auto;
+            background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: var(--surface); margin: 5% auto; padding: 2.5rem;
+            border: 1px solid var(--border); border-radius: 16px; width: 90%; max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); animation: zoomIn 0.3s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .close-btn { float: right; font-size: 1.5rem; font-weight: bold; cursor: pointer; color: var(--text-muted); }
+        .close-btn:hover { color: var(--text-main); }
+        .detail-row { margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        .detail-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
+        .detail-value { font-size: 0.95rem; color: var(--text-main); font-weight: 600; margin-top: 0.15rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="max-width:100%;">
+            <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SmartCampus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'"><div class="logo-text"><span class="name">SmartCampus</span><span class="tagline">Complaint System</span></div></a>
+            <div>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <span id="user-name-badge" style="margin-left:1rem;font-weight:500;color:var(--text-muted);font-size:0.9rem;"></span>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="staff-dashboard.html" class="sidebar-link active">📊 Dashboard</a>
+                <a href="#" class="sidebar-link">🔔 Notifications</a>
+                <a href="#" class="sidebar-link">👤 Profile</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+                <div>
+                    <h2>Welcome back, <span id="staff-name">Staff Member</span> 💼</h2>
+                    <p class="text-muted">Manage and resolve campus complaints assigned to your role/department.</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="card stat-card">
+                    <div class="stat-icon">📥</div>
+                    <span class="stat-value" id="stat-total">—</span>
+                    <span class="stat-label">Total Assigned</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <span class="stat-value" id="stat-pending">—</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <span class="stat-value" id="stat-progress">—</span>
+                    <span class="stat-label">In Progress</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">✅</div>
+                    <span class="stat-value" id="stat-resolved">—</span>
+                    <span class="stat-label">Resolved / Closed</span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom:1rem;">Assigned Complaints</h3>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="ALL">All</button>
+                <button class="filter-btn" data-filter="PENDING">Pending</button>
+                <button class="filter-btn" data-filter="IN_PROGRESS">In Progress</button>
+                <button class="filter-btn" data-filter="RESOLVED">Resolved</button>
+                <button class="filter-btn" data-filter="CLOSED">Closed</button>
+                <button class="filter-btn" data-filter="ESCALATED">Escalated</button>
+            </div>
+
+            <div id="complaints-list" class="complaint-list">
+                <p class="text-muted text-center" style="padding:2rem 0;">Loading complaints...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Update Status Modal -->
+    <div id="status-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3 style="margin-bottom: 1.5rem;" id="modal-title">Update Complaint</h3>
+            
+            <div id="modal-details" style="margin-bottom: 1.5rem;">
+                <!-- Filled dynamically -->
+            </div>
+
+            <form id="update-form">
+                <input type="hidden" id="modal-complaint-id">
+                
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="modal-status" style="display:block; font-weight:500; margin-bottom:0.4rem;">New Status</label>
+                    <select id="modal-status" required style="width:100%; padding:0.65rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--background); color:var(--text-main); outline:none;">
+                        <option value="PENDING">Pending</option>
+                        <option value="ASSIGNED">Assigned</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                        <option value="CLOSED">Closed</option>
+                        <option value="REOPENED">Reopened</option>
+                        <option value="ESCALATED">Escalated</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="modal-comment" style="display:block; font-weight:500; margin-bottom:0.4rem;">Comments / Action Taken</label>
+                    <textarea id="modal-comment" placeholder="Describe the action taken or reason for update..." style="width:100%; min-height:80px; padding:0.65rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--background); color:var(--text-main); outline:none;" required></textarea>
+                </div>
+
+                <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/auth.js?v=2"></script>
+    <script src="js/api/api.js?v=2"></script>
+    <script>
+        // Redirect if not logged in or doesn't have staff/safety officer credentials
+        redirectIfNotLoggedIn();
+        const user = getUser();
+        if (user) {
+            const hasAccess = user.roles.includes('ROLE_STAFF') || user.roles.includes('ROLE_DEPARTMENT_HEAD') || user.roles.includes('ROLE_SAFETY_OFFICER');
+            if (!hasAccess) {
+                window.location.href = getDashboardForUser(user);
+            }
+            document.getElementById('staff-name').textContent = user.email.split('@')[0];
+            document.getElementById('user-name-badge').textContent = user.email;
+        }
+
+        function doLogout() { clearSession(); window.location.href = 'login.html'; }
+
+        let allComplaints = [];
+        let currentFilter = 'ALL';
+
+        const priorityColors = { LOW: '#10B981', MEDIUM: '#F59E0B', HIGH: '#EF4444', CRITICAL: '#7C3AED' };
+        const statusColors = { PENDING: '#F59E0B', ASSIGNED: '#3B82F6', IN_PROGRESS: '#3B82F6', RESOLVED: '#10B981', CLOSED: '#6B7280', REJECTED: '#EF4444', REOPENED: '#EC4899', ESCALATED: '#7C3AED' };
+
+        async function loadComplaints() {
+            try {
+                allComplaints = await api.getStaffComplaints();
+                updateStats();
+                applyFilter();
+            } catch (err) {
+                document.getElementById('complaints-list').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${err.message || 'Failed to load complaints.'}</p></div>`;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = allComplaints.length;
+            document.getElementById('stat-pending').textContent = allComplaints.filter(c => c.status === 'PENDING').length;
+            document.getElementById('stat-progress').textContent = allComplaints.filter(c => c.status === 'IN_PROGRESS' || c.status === 'ASSIGNED').length;
+            document.getElementById('stat-resolved').textContent = allComplaints.filter(c => c.status === 'RESOLVED' || c.status === 'CLOSED').length;
+        }
+
+        function applyFilter() {
+            const container = document.getElementById('complaints-list');
+            const filtered = currentFilter === 'ALL' ? allComplaints : allComplaints.filter(c => c.status === currentFilter);
+            
+            if (!filtered.length) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>No complaints found with status "${currentFilter.replace('_', ' ')}".</p></div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(c => {
+                const sColor = statusColors[c.status] || '#6B7280';
+                const pColor = priorityColors[c.priority] || '#6B7280';
+                const date = c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '—';
+                
+                return `
+                <div class="complaint-card">
+                    <div class="cc-header">
+                        <span class="cc-number">#${c.complaintNumber || c.id}</span>
+                        <div class="cc-badges">
+                            <span class="badge" style="background:${sColor}22;color:${sColor};">${c.status?.replace('_', ' ')}</span>
+                            <span class="badge" style="background:${pColor}22;color:${pColor};">${c.priority || ''}</span>
+                        </div>
+                    </div>
+                    <div class="cc-desc">${c.description}</div>
+                    <div class="cc-meta">
+                        <span>📁 ${c.categoryName || 'Uncategorized'}</span>
+                        <span>📍 ${c.location || '—'}</span>
+                        <span>🏢 ${c.departmentName || 'Not assigned'}</span>
+                        <span>📅 ${date}</span>
+                        <button class="btn btn-secondary btn-sm" onclick='openModal(${JSON.stringify(c)})' style="margin-left:auto; padding:0.25rem 0.75rem; font-size:0.8rem;">Update Status</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Filter handlers
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                applyFilter();
+            });
+        });
+
+        // Modal Handlers
+        function openModal(complaint) {
+            document.getElementById('modal-complaint-id').value = complaint.id;
+            document.getElementById('modal-status').value = complaint.status;
+            document.getElementById('modal-comment').value = '';
+            
+            document.getElementById('modal-title').textContent = `Update Complaint #${complaint.complaintNumber || complaint.id}`;
+            
+            const detailsEl = document.getElementById('modal-details');
+            detailsEl.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value" style="font-weight:400; line-height:1.4;">${complaint.description}</div>
+                </div>
+                <div class="detail-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div>
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">${complaint.location || '—'}</div>
+                    </div>
+                    <div>
+                        <div class="detail-label">Category</div>
+                        <div class="detail-value">${complaint.categoryName || '—'}</div>
+                    </div>
+                </div>
+                <div class="detail-row" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div>
+                        <div class="detail-label">Priority</div>
+                        <div class="detail-value">${complaint.priority || '—'}</div>
+                    </div>
+                    <div>
+                        <div class="detail-label">Assigned Staff</div>
+                        <div class="detail-value">${complaint.assignedStaffName || 'Not Assigned'}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('status-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('status-modal').style.display = 'none';
+        }
+
+        document.getElementById('update-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('modal-complaint-id').value;
+            const status = document.getElementById('modal-status').value;
+            const comment = document.getElementById('modal-comment').value.trim();
+            
+            try {
+                await api.updateStatus(id, status, comment);
+                showToast('Status updated successfully!', 'success');
+                closeModal();
+                loadComplaints();
+            } catch (err) {
+                showToast(err.message || 'Failed to update status', 'error');
+            }
+        });
+
+        // Initialize dashboard
+        loadComplaints();
+    </script>
+</body>
+</html>

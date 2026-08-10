@@ -1,0 +1,16 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.campus:complaint-system >---------------------
+[INFO] Building smart-campus-complaint-system 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- dependency:3.10.0:tree (default-cli) @ complaint-system ---
+[INFO] com.campus:complaint-system:jar:0.0.1-SNAPSHOT
+[INFO] \- org.projectlombok:lombok:jar:1.18.46:compile (optional)
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.692 s
+[INFO] Finished at: 2026-08-09T11:08:52+05:30
+[INFO] ------------------------------------------------------------------------

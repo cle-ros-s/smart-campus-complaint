@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════
+   DARK MODE OVERRIDES
+═══════════════════════════════════════ */
+html.dark {
+    --bg:          #0c1929;
+    --surface:     #122038;
+    --surface-2:   #0f1c30;
+    --text-main:   #e2edf8;
+    --text-muted:  #7aadce;
+    --text-light:  #4a7a9b;
+    --border:      #1e3a55;
+    --border-2:    #254a6a;
+    --primary-light: rgba(10,110,189,0.18);
+    --shadow-sm:   0 2px 8px rgba(0,0,0,0.3);
+    --shadow:      0 4px 20px rgba(0,0,0,0.4);
+    --shadow-lg:   0 8px 40px rgba(0,0,0,0.5);
+}
+
+html.dark .navbar {
+    background: rgba(12,25,41,0.95);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 0 var(--border);
+}
+
+html.dark .auth-card,
+html.dark .modal-box,
+html.dark .card {
+    background: var(--surface);
+    border-color: var(--border);
+}
+
+html.dark .form-group input,
+html.dark .form-group select,
+html.dark .form-control,
+html.dark .form-group textarea {
+    background: var(--surface-2);
+    border-color: var(--border-2);
+    color: var(--text-main);
+}
+
+html.dark .form-group input:focus,
+html.dark .form-group select:focus,
+html.dark .form-control:focus {
+    background: #0f1c30;
+    border-color: var(--primary);
+}
+
+html.dark .demo-box { background: rgba(10,110,189,0.1); border-color: var(--border-2); }
+html.dark .demo-item { background: rgba(255,255,255,0.05); }
+html.dark .demo-item:hover { background: rgba(10,110,189,0.2); }
+html.dark .demo-pass code { background: var(--surface-2); border-color: var(--border); }
+
+html.dark .theme-toggle { background: var(--surface); border-color: var(--border); color: var(--text-main); }
+
+html.dark .modal-foot { background: var(--surface-2); border-color: var(--border); }
+html.dark .modal-body { background: var(--surface); }
+
+html.dark .feature-card { background: var(--surface); border-color: var(--border); }
+html.dark .steps-section { background: var(--surface); }
+
+html.dark .toast { background: #1a2d42; }
+
+html.dark .section-label { border-bottom-color: var(--border); }
+
+html.dark .error-msg { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+html.dark .success-msg { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: #6ee7b7; }

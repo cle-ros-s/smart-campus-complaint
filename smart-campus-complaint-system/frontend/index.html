@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCampus | Report. Track. Resolve.</title>
+    <meta name="description" content="A secure and confidential platform for making your campus a safer and better place.">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        body { display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* ── NAVBAR ─────────────────────────────────── */
+        .navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(14px); }
+
+        /* ── HERO ───────────────────────────────────── */
+        .hero-section {
+            background: var(--grad-hero);
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 0 5rem;
+            color: #fff;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='39' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") repeat;
+            opacity: 0.4;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0; right: 0;
+            height: 80px;
+            background: var(--bg);
+            clip-path: ellipse(55% 100% at 50% 100%);
+        }
+        .hero-inner {
+            position: relative; z-index: 1;
+            text-align: center;
+            max-width: 720px; margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .hero-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 999px;
+            padding: 0.35rem 1rem;
+            font-size: 0.8rem; font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.75rem;
+            letter-spacing: 0.04em;
+        }
+        .hero-pill span { width: 7px; height: 7px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+        .hero-title {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 1.25rem;
+            letter-spacing: -1px;
+        }
+        .hero-title .highlight {
+            color: var(--secondary);
+            display: inline-block;
+        }
+        .hero-sub {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+        }
+        .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .hero-cta .btn-lg { min-width: 180px; }
+        .btn-ghost {
+            background: rgba(255,255,255,0.15);
+            border: 1.5px solid rgba(255,255,255,0.4);
+            color: #fff;
+            backdrop-filter: blur(6px);
+        }
+        .btn-ghost:hover { background: rgba(255,255,255,0.25); color: #fff; transform: translateY(-2px); }
+
+        /* Hero stats */
+        .hero-stats {
+            display: flex; justify-content: center; gap: 3rem;
+            margin-top: 3.5rem;
+            flex-wrap: wrap;
+        }
+        .stat { text-align: center; }
+        .stat-num { font-size: 2rem; font-weight: 800; color: var(--secondary); line-height: 1; }
+        .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.65); font-weight: 500; margin-top: 0.3rem; }
+
+        /* ── FEATURES ───────────────────────────────── */
+        .features-section { padding: 5rem 0; }
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-eyebrow {
+            display: inline-block;
+            background: var(--primary-light); color: var(--primary);
+            border-radius: 999px; padding: 0.3rem 1rem;
+            font-size: 0.78rem; font-weight: 700;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 800; color: var(--text-main);
+            letter-spacing: -0.5px; line-height: 1.25;
+        }
+        .section-desc { color: var(--text-muted); margin-top: 0.75rem; font-size: 1rem; max-width: 560px; margin-inline: auto; }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--grad-primary);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--border-2); }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-icon {
+            width: 60px; height: 60px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 1.25rem;
+        }
+        .icon-blue  { background: #e8f4fd; }
+        .icon-gold  { background: #fff8e6; }
+        .icon-teal  { background: #e6f7f5; }
+        .icon-green { background: #ecfdf5; }
+        .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
+
+        /* ── HOW IT WORKS ───────────────────────────── */
+        .steps-section { background: var(--surface); padding: 5rem 0; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+        .step {
+            text-align: center;
+            position: relative;
+        }
+        .step-num {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            background: var(--grad-primary);
+            color: #fff;
+            font-size: 1.2rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 4px 16px rgba(10,110,189,0.3);
+        }
+        .step h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
+        .step p { color: var(--text-muted); font-size: 0.83rem; line-height: 1.55; }
+
+        /* ── CTA BANNER ─────────────────────────────── */
+        .cta-section {
+            background: var(--grad-hero);
+            padding: 4rem 0;
+            text-align: center;
+            color: #fff;
+        }
+        .cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
+        .cta-section p { color: rgba(255,255,255,0.75); margin-bottom: 2rem; font-size: 1rem; }
+
+        /* ── FOOTER ─────────────────────────────────── */
+        footer {
+            background: #042b5f;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.82rem;
+        }
+        footer a { color: rgba(255,255,255,0.8); }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo.png" alt="SmartCampus Logo" onerror="this.style.display='none'">
+                <div class="logo-text">
+                    <span class="name">SmartCampus</span>
+                    <span class="tagline">Complaint System</span>
+                </div>
+            </a>
+            <div class="navbar-actions">
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
+                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="hero-inner">
+            <div class="hero-pill">
+                <span></span> Secure & Confidential Platform
+            </div>
+            <h1 class="hero-title">
+                Report. Track.<br>
+                <span class="highlight">Resolve.</span>
+            </h1>
+            <p class="hero-sub">
+                A smart, secure platform that empowers students to voice campus concerns confidentially — routed to the right department, resolved on time.
+            </p>
+            <div class="hero-cta">
+                <a href="login.html" class="btn btn-gold btn-lg">🚀 Report an Issue</a>
+                <a href="track.html" class="btn btn-ghost btn-lg">🔍 Track Complaint</a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Confidential</div></div>
+                <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Available</div></div>
+                <div class="stat"><div class="stat-num">Auto</div><div class="stat-label">Escalation</div></div>
+                <div class="stat"><div class="stat-num">Live</div><div class="stat-label">Tracking</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Why SmartCampus?</span>
+                <h2 class="section-title">Everything you need to resolve campus issues</h2>
+                <p class="section-desc">Built for students, managed by staff — our platform makes campus life better.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon icon-blue">🔒</div>
+                    <h3>Confidential Reporting</h3>
+                    <p>Your identity is protected and only shared with authorized personnel when absolutely necessary.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-gold">⚡</div>
+                    <h3>Fast Resolution</h3>
+                    <p>Complaints are automatically routed to the right department for immediate priority action.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-teal">📡</div>
+                    <h3>Real-time Tracking</h3>
+                    <p>Track the exact status of your complaint at any time — no more chasing people down.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">⏰</div>
+                    <h3>Auto Escalation</h3>
+                    <p>SLA-based escalation ensures no complaint is forgotten — management gets notified automatically.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="steps-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-eyebrow">Simple Process</span>
+                <h2 class="section-title">How it works</h2>
+            </div>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Submit a Complaint</h4>
+                    <p>Login, fill in the complaint form with details, category, and attach evidence.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Auto-Routing</h4>
+                    <p>The system assigns priority and routes your complaint to the correct department.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Track Progress</h4>
+                    <p>Monitor status updates in real-time using your complaint number or tracking code.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <h4>Resolution & Feedback</h4>
+                    <p>Get notified on resolution and share feedback to improve the system.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to make your campus better?</h2>
+            <p>Join thousands of students using SmartCampus to resolve issues faster.</p>
+            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+                <a href="register.html" class="btn btn-gold btn-lg">Create Free Account</a>
+                <a href="login.html" class="btn btn-ghost btn-lg">Login to Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 SmartCampus Complaint System · Built for a better campus experience</p>
+    </footer>
+
+    <div class="toast-container" id="toast-container"></div>
+    <script src="js/utils/theme.js"></script>
+</body>
+</html>

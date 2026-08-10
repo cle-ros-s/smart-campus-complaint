@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Complaint | Smart Campus</title>
+    <meta name="description" content="Track your complaint status anonymously using your complaint number and tracking code.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        .track-wrapper {
+            max-width: 700px; margin: 4rem auto; padding: 0 1.5rem;
+        }
+        .track-header { text-align: center; margin-bottom: 2.5rem; }
+        .track-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .track-header p { color: var(--text-muted); }
+        .track-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem;
+            box-shadow: 0 8px 32px rgba(79,70,229,0.08);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.4rem; }
+        .form-group input {
+            width: 100%; padding: 0.65rem 1rem;
+            border: 1.5px solid var(--border); border-radius: var(--radius);
+            font-size: 0.95rem; font-family: var(--font-sans);
+            background: var(--background); color: var(--text-main);
+            transition: var(--transition); outline: none;
+        }
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+        }
+        .btn-full { width: 100%; padding: 0.75rem; font-size: 1rem; }
+        .btn-full:disabled { opacity: 0.7; cursor: not-allowed; }
+        .error-msg {
+            background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5;
+            border-radius: var(--radius); padding: 0.65rem 1rem; font-size: 0.875rem; margin-bottom: 1rem; display: none;
+        }
+        /* Result card */
+        #result-card {
+            display: none; margin-top: 2rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2rem;
+            box-shadow: 0 8px 32px rgba(79,70,229,0.08);
+        }
+        .result-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+        .result-title { font-size: 1.1rem; font-weight: 700; }
+        .result-number { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .detail-item { padding: 1rem; background: var(--background); border-radius: var(--radius); }
+        .detail-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; }
+        .detail-value { font-weight: 600; font-size: 0.95rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff4; border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+        .timeline { margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+        .timeline h4 { margin-bottom: 1rem; font-size: 0.95rem; }
+        .progress-bar-wrap { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; margin-bottom: 0.5rem; }
+        .progress-bar { height: 100%; border-radius: 99px; background: var(--primary); transition: width 1s ease; }
+        .progress-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SmartCampus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'"><div class="logo-text"><span class="name">SmartCampus</span><span class="tagline">Complaint System</span></div></a>
+            <div>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <a href="login.html" class="btn btn-secondary" style="margin-left: 1rem;">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="track-wrapper">
+        <div class="track-header">
+            <h1>🔍 Track Your Complaint</h1>
+            <p>Enter your complaint number and tracking code to check the current status.</p>
+        </div>
+
+        <div class="track-card">
+            <div class="error-msg" id="error-msg"></div>
+            <form id="track-form" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="complaint-number">Complaint Number</label>
+                        <input type="text" id="complaint-number" placeholder="CMP-2026-10001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tracking-code">Tracking Code</label>
+                        <input type="text" id="tracking-code" placeholder="TRACK01" required>
+                    </div>
+                </div>
+                <button type="submit" id="track-btn" class="btn btn-primary btn-full">Track Complaint</button>
+            </form>
+        </div>
+
+        <div id="result-card">
+            <div class="result-header">
+                <div>
+                    <div class="result-title" id="res-title"></div>
+                    <div class="result-number" id="res-number"></div>
+                </div>
+                <div id="res-status"></div>
+            </div>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value" id="res-category">—</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Priority</div>
+                    <div class="detail-value" id="res-priority">—</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Department</div>
+                    <div class="detail-value" id="res-dept">—</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Submitted On</div>
+                    <div class="detail-value" id="res-date">—</div>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <h4>Resolution Progress</h4>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Pending</span><span>In Progress</span><span>Resolved</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/auth.js?v=2"></script>
+    <script src="js/api/api.js?v=2"></script>
+    <script>
+        const progressMap = { PENDING: '10%', IN_PROGRESS: '55%', RESOLVED: '100%', CLOSED: '100%', REJECTED: '100%' };
+
+        document.getElementById('track-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const cn = document.getElementById('complaint-number').value.trim();
+            const tc = document.getElementById('tracking-code').value.trim();
+            const btn = document.getElementById('track-btn');
+            const errEl = document.getElementById('error-msg');
+            const resultCard = document.getElementById('result-card');
+
+            errEl.style.display = 'none';
+            resultCard.style.display = 'none';
+
+            if (!cn || !tc) {
+                errEl.textContent = 'Please enter both complaint number and tracking code.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Searching...';
+
+            try {
+                const data = await api.trackComplaint(cn, tc);
+                // Populate result card
+                document.getElementById('res-title').textContent = data.description?.substring(0, 60) + (data.description?.length > 60 ? '...' : '') || 'Complaint Details';
+                document.getElementById('res-number').textContent = `#${data.complaintNumber} · Tracking: ${data.trackingCode || tc}`;
+                document.getElementById('res-status').innerHTML = statusBadge(data.status);
+                document.getElementById('res-category').textContent = data.categoryName || '—';
+                document.getElementById('res-priority').innerHTML = statusBadge(data.priority);
+                document.getElementById('res-dept').textContent = data.departmentName || 'Not assigned';
+                document.getElementById('res-date').textContent = data.createdAt ? new Date(data.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+                document.getElementById('progress-bar').style.width = progressMap[data.status] || '10%';
+                resultCard.style.display = 'block';
+            } catch (err) {
+                errEl.textContent = err.message || 'No complaint found with those details. Please check and try again.';
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Track Complaint';
+            }
+        });
+    </script>
+</body>
+</html>

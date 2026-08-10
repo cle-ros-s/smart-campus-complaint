@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | Smart Campus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        .dashboard-grid { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 64px); }
+        .sidebar { background-color: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1rem; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-link { padding: 0.75rem 1rem; border-radius: var(--radius); color: var(--text-muted); font-weight: 500; }
+        .sidebar-link:hover, .sidebar-link.active { background-color: var(--primary-light); color: var(--primary); }
+        .main-content { padding: 2rem; background-color: var(--background); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; text-align: center; }
+        .stat-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+        .complaint-row { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 0.5rem; }
+        .complaint-row:last-child { border-bottom: none; }
+        .complaint-row-desc { font-size: 0.9rem; font-weight: 500; flex: 1; }
+        .complaint-row-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .badge { padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+        .quick-action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .quick-action { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; display: flex; align-items: center; gap: 1rem; transition: var(--transition); cursor: pointer; text-decoration: none; color: var(--text-main); }
+        .quick-action:hover { border-color: var(--primary); box-shadow: 0 4px 16px rgba(10,110,189,0.12); transform: translateY(-2px); color: var(--text-main); }
+        .qa-icon { font-size: 1.8rem; }
+        .qa-title { font-weight: 600; font-size: 0.95rem; }
+        .qa-sub { font-size: 0.78rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="max-width: 100%;">
+            <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SmartCampus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'"><div class="logo-text"><span class="name">SmartCampus</span><span class="tagline">Complaint System</span></div></a>
+            <div>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <span id="user-name-badge" style="margin-left:1rem;font-weight:500;color:var(--text-muted);font-size:0.9rem;"></span>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="student-dashboard.html" class="sidebar-link active">📊 Dashboard</a>
+                <a href="submit-complaint.html" class="sidebar-link">📝 Submit Complaint</a>
+                <a href="my-complaints.html" class="sidebar-link">📋 My Complaints</a>
+                <a href="#" class="sidebar-link">🔔 Notifications</a>
+                <a href="#" class="sidebar-link">👤 Profile</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h2 style="margin-bottom: 0.25rem;">Welcome back, <span id="student-name">Student</span> 👋</h2>
+            <p class="text-muted" style="margin-bottom: 2rem;">Here is the overview of your complaints.</p>
+
+            <div class="stats-grid">
+                <div class="card stat-card">
+                    <div class="stat-icon">📋</div>
+                    <span class="stat-value" id="stat-total">—</span>
+                    <span class="stat-label">Total Complaints</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">⏳</div>
+                    <span class="stat-value" id="stat-pending">—</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <span class="stat-value" id="stat-progress">—</span>
+                    <span class="stat-label">In Progress</span>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon">✅</div>
+                    <span class="stat-value" id="stat-resolved">—</span>
+                    <span class="stat-label">Resolved</span>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom:1rem;">Quick Actions</h3>
+            <div class="quick-action-grid">
+                <a href="submit-complaint.html" class="quick-action">
+                    <span class="qa-icon">📝</span>
+                    <div><div class="qa-title">New Complaint</div><div class="qa-sub">Report a new issue</div></div>
+                </a>
+                <a href="my-complaints.html" class="quick-action">
+                    <span class="qa-icon">📋</span>
+                    <div><div class="qa-title">View All</div><div class="qa-sub">See all your complaints</div></div>
+                </a>
+                <a href="track.html" class="quick-action">
+                    <span class="qa-icon">🔍</span>
+                    <div><div class="qa-title">Track Complaint</div><div class="qa-sub">Track by number</div></div>
+                </a>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h3>Recent Complaints</h3>
+                    <a href="my-complaints.html" class="btn btn-secondary">View All</a>
+                </div>
+                <div id="recent-complaints-container">
+                    <p class="text-muted text-center" style="padding: 2rem 0;">Loading...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/auth.js?v=2"></script>
+    <script src="js/api/api.js?v=2"></script>
+    <script>
+        redirectIfNotLoggedIn();
+        const user = getUser();
+        if (user) {
+            if (!user.roles.includes('ROLE_STUDENT')) {
+                window.location.href = getDashboardForUser(user);
+            }
+            document.getElementById('student-name').textContent = user.email?.split('@')[0] || 'Student';
+            document.getElementById('user-name-badge').textContent = user.email;
+        }
+        function doLogout() { clearSession(); window.location.href = 'login.html'; }
+        const statusColors = { PENDING: '#F59E0B', IN_PROGRESS: '#3B82F6', RESOLVED: '#10B981', CLOSED: '#6B7280', REJECTED: '#EF4444' };
+        async function loadDashboard() {
+            try {
+                const complaints = await api.getMyComplaints();
+                document.getElementById('stat-total').textContent = complaints.length;
+                document.getElementById('stat-pending').textContent = complaints.filter(c => c.status === 'PENDING').length;
+                document.getElementById('stat-progress').textContent = complaints.filter(c => c.status === 'IN_PROGRESS').length;
+                document.getElementById('stat-resolved').textContent = complaints.filter(c => c.status === 'RESOLVED').length;
+                const recent = complaints.slice(0, 5);
+                const container = document.getElementById('recent-complaints-container');
+                if (!recent.length) {
+                    container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--text-muted);"><p>No complaints submitted yet.</p><a href="submit-complaint.html" class="btn btn-primary" style="margin-top:1rem;">Submit Your First Complaint</a></div>`;
+                    return;
+                }
+                container.innerHTML = recent.map(c => {
+                    const sColor = statusColors[c.status] || '#6B7280';
+                    const date = c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+                    return `<div class="complaint-row"><div><div class="complaint-row-desc">${c.description?.substring(0,70)}${c.description?.length > 70 ? '...' : ''}</div><div class="complaint-row-meta">#${c.complaintNumber || c.id} · ${c.categoryName || ''} · ${date}</div></div><span class="badge" style="background:${sColor}22;color:${sColor};">${(c.status||'').replace('_',' ')}</span></div>`;
+                }).join('');
+            } catch (err) {
+                document.getElementById('recent-complaints-container').innerHTML = `<p class="text-muted text-center" style="padding:2rem;">${err.message || 'Failed to load data.'}</p>`;
+                document.getElementById('stat-total').textContent = '!';
+            }
+        }
+        loadDashboard();
+    </script>
+</body>
+</html>

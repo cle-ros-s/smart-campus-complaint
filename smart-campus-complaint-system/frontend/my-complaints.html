@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Complaints | Smart Campus</title>
+    <meta name="description" content="View and manage all your submitted campus complaints.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        .dashboard-grid { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 64px); }
+        .sidebar { background-color: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1rem; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-link { padding: 0.75rem 1rem; border-radius: var(--radius); color: var(--text-muted); font-weight: 500; }
+        .sidebar-link:hover, .sidebar-link.active { background-color: rgba(79,70,229,0.1); color: var(--primary); }
+        .main-content { padding: 2rem; background-color: var(--background); }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 700; }
+        /* Filters */
+        .filters { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 0.4rem 1rem; border: 1.5px solid var(--border);
+            border-radius: 999px; font-size: 0.85rem; font-weight: 500;
+            cursor: pointer; background: var(--surface); color: var(--text-muted);
+            transition: var(--transition);
+        }
+        .filter-btn.active, .filter-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(79,70,229,0.07); }
+        /* Complaint Cards */
+        .complaint-list { display: flex; flex-direction: column; gap: 1rem; }
+        .complaint-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: var(--transition);
+        }
+        .complaint-card:hover { box-shadow: 0 4px 16px rgba(79,70,229,0.1); border-color: rgba(79,70,229,0.3); }
+        .cc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem; }
+        .cc-number { font-size: 0.78rem; font-weight: 600; color: var(--primary); }
+        .cc-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .cc-desc { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-main); }
+        .cc-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.75rem; }
+        .cc-meta span::before { margin-right: 0.3rem; }
+        .empty-state {
+            text-align: center; padding: 4rem 2rem;
+            color: var(--text-muted); font-size: 0.95rem;
+        }
+        .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+        .loading-skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--surface) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; height: 100px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .badge { padding: 0.2rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="max-width:100%;">
+            <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SmartCampus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'"><div class="logo-text"><span class="name">SmartCampus</span><span class="tagline">Complaint System</span></div></a>
+            <div>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <span id="user-name-badge" style="margin-left:1rem;font-weight:500;color:var(--text-muted);font-size:0.9rem;"></span>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="student-dashboard.html" class="sidebar-link">📊 Dashboard</a>
+                <a href="submit-complaint.html" class="sidebar-link">📝 Submit Complaint</a>
+                <a href="my-complaints.html" class="sidebar-link active">📋 My Complaints</a>
+                <a href="#" class="sidebar-link">🔔 Notifications</a>
+                <a href="#" class="sidebar-link">👤 Profile</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>📋 My Complaints</h2>
+                <a href="submit-complaint.html" class="btn btn-primary">+ New Complaint</a>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="ALL">All</button>
+                <button class="filter-btn" data-filter="PENDING">Pending</button>
+                <button class="filter-btn" data-filter="IN_PROGRESS">In Progress</button>
+                <button class="filter-btn" data-filter="RESOLVED">Resolved</button>
+                <button class="filter-btn" data-filter="CLOSED">Closed</button>
+            </div>
+
+            <div id="complaints-list" class="complaint-list">
+                <div class="loading-skeleton"></div>
+                <div class="loading-skeleton"></div>
+                <div class="loading-skeleton"></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/auth.js?v=2"></script>
+    <script src="js/api/api.js?v=2"></script>
+    <script>
+        redirectIfNotLoggedIn();
+        const user = getUser();
+        if (user) {
+            if (!user.roles.includes('ROLE_STUDENT')) {
+                window.location.href = getDashboardForUser(user);
+            }
+            document.getElementById('user-name-badge').textContent = user.email;
+        }
+
+        function doLogout() { clearSession(); window.location.href = 'login.html'; }
+
+        let allComplaints = [];
+        let currentFilter = 'ALL';
+
+        const priorityColors = { LOW: '#10B981', MEDIUM: '#F59E0B', HIGH: '#EF4444', CRITICAL: '#7C3AED' };
+        const statusColors = { PENDING: '#F59E0B', IN_PROGRESS: '#3B82F6', RESOLVED: '#10B981', CLOSED: '#6B7280', REJECTED: '#EF4444' };
+
+        function renderComplaints(complaints) {
+            const container = document.getElementById('complaints-list');
+            if (!complaints.length) {
+                container.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>No complaints found${currentFilter !== 'ALL' ? ` with status "${currentFilter.replace('_',' ')}"` : ''}.</p><a href="submit-complaint.html" class="btn btn-primary" style="margin-top:1rem;">Submit Your First Complaint</a></div>`;
+                return;
+            }
+            container.innerHTML = complaints.map(c => {
+                const sColor = statusColors[c.status] || '#6B7280';
+                const pColor = priorityColors[c.priority] || '#6B7280';
+                const date = c.createdAt ? new Date(c.createdAt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+                return `
+                <div class="complaint-card">
+                    <div class="cc-header">
+                        <span class="cc-number">#${c.complaintNumber || c.id}</span>
+                        <div class="cc-badges">
+                            <span class="badge" style="background:${sColor}22;color:${sColor};">${(c.status||'').replace('_',' ')}</span>
+                            <span class="badge" style="background:${pColor}22;color:${pColor};">${c.priority || ''}</span>
+                        </div>
+                    </div>
+                    <div class="cc-desc">${c.description?.substring(0, 100)}${(c.description?.length > 100) ? '...' : ''}</div>
+                    <div class="cc-meta">
+                        <span>📁 ${c.categoryName || 'Uncategorized'}</span>
+                        <span>📍 ${c.location || '—'}</span>
+                        <span>🏢 ${c.departmentName || 'Not assigned'}</span>
+                        <span>📅 ${date}</span>
+                        <span>🔒 ${c.privacyMode || '—'}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function loadComplaints() {
+            try {
+                allComplaints = await api.getMyComplaints();
+                applyFilter();
+            } catch (err) {
+                document.getElementById('complaints-list').innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${err.message || 'Failed to load complaints.'}</p></div>`;
+            }
+        }
+
+        function applyFilter() {
+            const filtered = currentFilter === 'ALL' ? allComplaints : allComplaints.filter(c => c.status === currentFilter);
+            renderComplaints(filtered);
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                applyFilter();
+            });
+        });
+
+        loadComplaints();
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Complaint | Smart Campus</title>
+    <meta name="description" content="Submit a new campus complaint confidentially.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        .dashboard-grid { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 64px); }
+        .sidebar { background-color: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1rem; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 0.5rem; }
+        .sidebar-link { padding: 0.75rem 1rem; border-radius: var(--radius); color: var(--text-muted); font-weight: 500; }
+        .sidebar-link:hover, .sidebar-link.active { background-color: rgba(79,70,229,0.1); color: var(--primary); }
+        .main-content { padding: 2rem; background-color: var(--background); }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h2 { font-size: 1.5rem; font-weight: 700; }
+        .page-header p { color: var(--text-muted); margin-top: 0.25rem; }
+        .form-section { max-width: 680px; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.4rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.65rem 1rem;
+            border: 1.5px solid var(--border); border-radius: var(--radius);
+            font-size: 0.95rem; font-family: var(--font-sans);
+            background: var(--background); color: var(--text-main);
+            transition: var(--transition); outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
+        }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .section-label {
+            font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--primary);
+            margin: 1.25rem 0 0.75rem; padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .privacy-options { display: flex; gap: 1rem; }
+        .privacy-opt { flex: 1; }
+        .privacy-opt input[type="radio"] { display: none; }
+        .privacy-opt label {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 1rem; border: 2px solid var(--border); border-radius: var(--radius);
+            cursor: pointer; transition: var(--transition); text-align: center;
+            font-weight: 500; gap: 0.4rem;
+        }
+        .privacy-opt input[type="radio"]:checked + label {
+            border-color: var(--primary);
+            background: rgba(79,70,229,0.06);
+            color: var(--primary);
+        }
+        .privacy-opt .icon { font-size: 1.5rem; }
+        .privacy-opt .desc { font-size: 0.75rem; color: var(--text-muted); font-weight: 400; }
+        .btn-submit { padding: 0.75rem 2rem; font-size: 1rem; }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
+        .error-msg { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; border-radius: var(--radius); padding: 0.65rem 1rem; font-size: 0.875rem; margin-bottom: 1rem; display: none; }
+        .success-banner { background: #F0FDF4; color: #15803D; border: 1px solid #86EFAC; border-radius: var(--radius); padding: 1.5rem; text-align: center; display: none; }
+        .success-banner h3 { margin-bottom: 0.5rem; }
+        .tracking-info { margin-top: 1rem; font-family: monospace; font-size: 1rem; background: #fff; padding: 0.5rem 1rem; border-radius: var(--radius); display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff4; border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 0.5rem; vertical-align: middle; }
+        /* Image Upload Styles */
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: var(--radius);
+            padding: 2rem; text-align: center; cursor: pointer;
+            transition: var(--transition); background: var(--background);
+            position: relative;
+        }
+        .upload-zone:hover, .upload-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(79,70,229,0.04);
+        }
+        .upload-zone input[type='file'] { display: none; }
+        .upload-zone .upload-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .upload-zone .upload-title { font-weight: 600; color: var(--text-main); margin-bottom: 0.25rem; }
+        .upload-zone .upload-sub { font-size: 0.82rem; color: var(--text-muted); }
+        .upload-hint { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; }
+        .image-preview-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem; margin-top: 1rem;
+        }
+        .preview-item {
+            position: relative; border-radius: var(--radius);
+            overflow: hidden; aspect-ratio: 1;
+            border: 1px solid var(--border);
+            background: var(--background);
+        }
+        .preview-item img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .preview-item .file-icon {
+            width: 100%; height: 100%; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--text-muted);
+            font-size: 0.7rem; gap: 0.25rem; padding: 0.5rem; text-align: center;
+        }
+        .preview-item .remove-btn {
+            position: absolute; top: 4px; right: 4px;
+            background: rgba(0,0,0,0.6); color: #fff;
+            border: none; border-radius: 50%; width: 20px; height: 20px;
+            cursor: pointer; font-size: 0.7rem; display: flex;
+            align-items: center; justify-content: center; line-height: 1;
+        }
+        .upload-progress {
+            margin-top: 0.75rem; display: none;
+        }
+        .upload-progress-bar-wrap {
+            background: var(--border); border-radius: 99px; height: 6px; overflow: hidden;
+        }
+        .upload-progress-bar {
+            height: 100%; background: var(--primary); border-radius: 99px;
+            transition: width 0.3s ease; width: 0%;
+        }
+        .upload-status { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.4rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="max-width:100%;">
+            <a href="index.html" class="logo"><img src="assets/images/logo.png" alt="SmartCampus Logo" style="width:36px;height:36px;object-fit:contain;" onerror="this.style.display='none'"><div class="logo-text"><span class="name">SmartCampus</span><span class="tagline">Complaint System</span></div></a>
+            <div>
+                <button id="theme-toggle" class="theme-toggle">🌙</button>
+                <span id="user-name-badge" style="margin-left:1rem;font-weight:500;color:var(--text-muted);font-size:0.9rem;"></span>
+                <button class="btn btn-secondary" style="margin-left: 1rem;" onclick="doLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="student-dashboard.html" class="sidebar-link">📊 Dashboard</a>
+                <a href="submit-complaint.html" class="sidebar-link active">📝 Submit Complaint</a>
+                <a href="my-complaints.html" class="sidebar-link">📋 My Complaints</a>
+                <a href="#" class="sidebar-link">🔔 Notifications</a>
+                <a href="#" class="sidebar-link">👤 Profile</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2>📝 Submit a New Complaint</h2>
+                <p>Your complaint will be handled confidentially and routed to the right department.</p>
+            </div>
+
+            <div class="form-section">
+                <div class="error-msg" id="error-msg"></div>
+
+                <div class="success-banner" id="success-banner">
+                    <h3>✅ Complaint Submitted Successfully!</h3>
+                    <p>Your complaint has been received and routed to the appropriate department.</p>
+                    <p>Save your tracking details below:</p>
+                    <div class="tracking-info" id="tracking-info"></div>
+                    <div style="margin-top:1.25rem;">
+                        <a href="my-complaints.html" class="btn btn-primary">View My Complaints</a>
+                        <button onclick="resetForm()" class="btn btn-secondary" style="margin-left:0.5rem;">Submit Another</button>
+                    </div>
+                </div>
+
+                <form id="complaint-form" novalidate>
+                    <p class="section-label">Complaint Details</p>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">-- Select a Category --</option>
+                            <option value="1">Hostel</option>
+                            <option value="2">Internet / Wi-Fi</option>
+                            <option value="3">Electricity</option>
+                            <option value="4">Water</option>
+                            <option value="5">Cleaning</option>
+                            <option value="6">Infrastructure</option>
+                            <option value="7">Ragging</option>
+                            <option value="8">Harassment</option>
+                            <option value="9">Suspected drug activity</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Describe the issue in detail. Be specific about what happened, when it started, and any impact it is having." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" placeholder="e.g. Block B, Room 204" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="priority">Priority</label>
+                            <select id="priority">
+                                <option value="LOW">🟢 Low</option>
+                                <option value="MEDIUM" selected>🟡 Medium</option>
+                                <option value="HIGH">🔴 High</option>
+                                <option value="CRITICAL">🚨 Critical</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <p class="section-label">Privacy Setting</p>
+                    <div class="privacy-options">
+                        <div class="privacy-opt">
+                            <input type="radio" name="privacy" id="priv-confidential" value="CONFIDENTIAL" checked>
+                            <label for="priv-confidential">
+                                <span class="icon">🔒</span>
+                                <span>Confidential</span>
+                                <span class="desc">Your identity is only visible to authorized staff</span>
+                            </label>
+                        </div>
+                        <div class="privacy-opt">
+                            <input type="radio" name="privacy" id="priv-anonymous" value="ANONYMOUS">
+                            <label for="priv-anonymous">
+                                <span class="icon">🕵️</span>
+                                <span>Anonymous</span>
+                                <span class="desc">Your identity is completely hidden from everyone</span>
+                            </label>
+                        </div>
+                        <div class="privacy-opt">
+                            <input type="radio" name="privacy" id="priv-public" value="PUBLIC">
+                            <label for="priv-public">
+                                <span class="icon">🌐</span>
+                                <span>Public</span>
+                                <span class="desc">Your name is visible to all involved parties</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="section-label">Attach Images / Files <span style="font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:0;">(optional)</span></p>
+
+                    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+                        <input type="file" id="file-input" multiple accept="image/*,.pdf">
+                        <div class="upload-icon">📎</div>
+                        <div class="upload-title">Click or drag & drop files here</div>
+                        <div class="upload-sub">Supports JPG, PNG, GIF, WebP, PDF</div>
+                    </div>
+                    <p class="upload-hint">Max 5 files · 10 MB each · Images will be attached after submission</p>
+
+                    <div class="image-preview-grid" id="preview-grid"></div>
+
+                    <div class="upload-progress" id="upload-progress">
+                        <div class="upload-progress-bar-wrap">
+                            <div class="upload-progress-bar" id="upload-progress-bar"></div>
+                        </div>
+                        <div class="upload-status" id="upload-status">Uploading files...</div>
+                    </div>
+
+                    <div style="margin-top: 2rem; display:flex; gap:1rem;">
+                        <button type="submit" id="submit-btn" class="btn btn-primary btn-submit">Submit Complaint</button>
+                        <a href="student-dashboard.html" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/utils/theme.js"></script>
+    <script src="js/utils/auth.js?v=2"></script>
+    <script src="js/api/api.js?v=2"></script>
+    <script>
+        redirectIfNotLoggedIn();
+        const user = getUser();
+        if (user) {
+            if (!user.roles.includes('ROLE_STUDENT')) {
+                window.location.href = getDashboardForUser(user);
+            }
+            document.getElementById('user-name-badge').textContent = user.email;
+        }
+        function doLogout() { clearSession(); window.location.href = 'login.html'; }
+
+        // ── Image Upload Logic ──────────────────────────────────────────
+        let selectedFiles = [];
+        const MAX_FILES = 5;
+
+        function renderPreviews() {
+            const grid = document.getElementById('preview-grid');
+            grid.innerHTML = '';
+            selectedFiles.forEach((f, idx) => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                if (f.type.startsWith('image/')) {
+                    const url = URL.createObjectURL(f);
+                    item.innerHTML = `<img src="${url}" alt="preview"><button class="remove-btn" onclick="removeFile(${idx})">✕</button>`;
+                } else {
+                    item.innerHTML = `<div class="file-icon">📄<span>${f.name.substring(0,15)}</span></div><button class="remove-btn" onclick="removeFile(${idx})">✕</button>`;
+                }
+                grid.appendChild(item);
+            });
+        }
+
+        function removeFile(idx) {
+            selectedFiles.splice(idx, 1);
+            renderPreviews();
+        }
+
+        function addFiles(newFiles) {
+            const remaining = MAX_FILES - selectedFiles.length;
+            const toAdd = Array.from(newFiles).slice(0, remaining);
+            if (Array.from(newFiles).length > remaining) {
+                showToast(`Max ${MAX_FILES} files allowed. Some files were skipped.`, 'error');
+            }
+            toAdd.forEach(f => {
+                if (f.size > 10 * 1024 * 1024) { showToast(`${f.name} exceeds 10 MB limit.`, 'error'); return; }
+                selectedFiles.push(f);
+            });
+            renderPreviews();
+        }
+
+        document.getElementById('file-input').addEventListener('change', (e) => addFiles(e.target.files));
+
+        const zone = document.getElementById('upload-zone');
+        zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+        zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('drag-over'); addFiles(e.dataTransfer.files); });
+
+        async function uploadFilesForComplaint(complaintId) {
+            if (!selectedFiles.length) return;
+            const progressWrap = document.getElementById('upload-progress');
+            const bar = document.getElementById('upload-progress-bar');
+            const status = document.getElementById('upload-status');
+            progressWrap.style.display = 'block';
+
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const f = selectedFiles[i];
+                status.textContent = `Uploading ${i + 1} of ${selectedFiles.length}: ${f.name}`;
+                bar.style.width = `${((i) / selectedFiles.length) * 100}%`;
+                try {
+                    const formData = new FormData();
+                    formData.append('file', f);
+                    formData.append('complaintId', complaintId);
+                    await fetch('http://localhost:8080/api/attachments/upload', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${getToken()}` },
+                        body: formData
+                    });
+                } catch (err) {
+                    console.warn('File upload failed:', f.name, err);
+                }
+            }
+            bar.style.width = '100%';
+            status.textContent = `✅ ${selectedFiles.length} file(s) uploaded!`;
+        }
+
+        // ── Form Submit ────────────────────────────────────────────────
+        function resetForm() {
+            document.getElementById('complaint-form').reset();
+            document.getElementById('complaint-form').style.display = '';
+            document.getElementById('success-banner').style.display = 'none';
+            selectedFiles = [];
+            renderPreviews();
+            document.getElementById('upload-progress').style.display = 'none';
+        }
+
+        document.getElementById('complaint-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const errEl = document.getElementById('error-msg');
+            errEl.style.display = 'none';
+
+            const categoryId = parseInt(document.getElementById('category').value);
+            const description = document.getElementById('description').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const priority = document.getElementById('priority').value;
+            const privacyMode = document.querySelector('input[name="privacy"]:checked').value;
+
+            if (!categoryId || !description || !location) {
+                errEl.textContent = 'Please fill in all required fields.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Submitting...';
+
+            try {
+                const data = await api.submitComplaint({ categoryId, description, location, priority, privacyMode });
+
+                // Upload files if any
+                if (selectedFiles.length > 0 && data.id) {
+                    btn.innerHTML = '<span class="spinner"></span>Uploading files...';
+                    await uploadFilesForComplaint(data.id);
+                }
+
+                document.getElementById('complaint-form').style.display = 'none';
+                const trackInfo = document.getElementById('tracking-info');
+                trackInfo.textContent = `Complaint #: ${data.complaintNumber || 'N/A'}  |  Tracking: ${data.trackingCode || 'N/A'}`;
+                document.getElementById('success-banner').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) {
+                errEl.textContent = err.message || 'Failed to submit complaint. Please try again.';
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Submit Complaint';
+            }
+        });
+    </script>
+</body>
+</html>
