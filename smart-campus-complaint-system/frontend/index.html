@@ -3,322 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartCampus | Report. Track. Resolve.</title>
-    <meta name="description" content="A secure and confidential platform for making your campus a safer and better place.">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dark-mode.css">
+    <title>Smart Campus Complaint Portal — Report & Track Campus Issues</title>
+    <meta name="description" content="Submit campus complaints with photos, pick a category, and follow status from Pending to Resolved.">
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+
+    <!-- Fonts: Sora (Headings) and Manrope (Body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/portal-theme.css">
     <style>
-        body { display: flex; flex-direction: column; min-height: 100vh; }
-
-        /* ── NAVBAR ─────────────────────────────────── */
-        .navbar { background: rgba(255,255,255,0.95); backdrop-filter: blur(14px); }
-
-        /* ── HERO ───────────────────────────────────── */
-        .hero-section {
-            background: var(--grad-hero);
+        /* Modern Micro-Interactions & Overrides */
+        :root {
+            --primary: #0284c7;
+            --primary-rgb: 2, 132, 199;
+        }
+        .carousel-slide {
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            transform: scale(1);
             position: relative;
-            overflow: hidden;
-            padding: 6rem 0 5rem;
-            color: #fff;
         }
-        .hero-section::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='40' cy='40' r='39' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E") repeat;
-            opacity: 0.4;
-        }
-        .hero-section::after {
-            content: '';
+        .carousel-slide:not(.active) {
+            opacity: 0;
+            transform: scale(0.98);
             position: absolute;
-            bottom: -2px; left: 0; right: 0;
-            height: 80px;
-            background: var(--bg);
-            clip-path: ellipse(55% 100% at 50% 100%);
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
         }
-        .hero-inner {
-            position: relative; z-index: 1;
-            text-align: center;
-            max-width: 720px; margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        .hero-pill {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 999px;
-            padding: 0.35rem 1rem;
-            font-size: 0.8rem; font-weight: 600;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 1.75rem;
-            letter-spacing: 0.04em;
-        }
-        .hero-pill span { width: 7px; height: 7px; background: var(--secondary); border-radius: 50%; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
-        .hero-title {
-            font-size: clamp(2.4rem, 5vw, 3.6rem);
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 1.25rem;
-            letter-spacing: -1px;
-        }
-        .hero-title .highlight {
-            color: var(--secondary);
+        .typewriter-cursor {
             display: inline-block;
+            width: 3px;
+            height: 0.9em;
+            background-color: currentColor;
+            vertical-align: middle;
+            margin-left: 4px;
+            animation: blink 0.8s infinite;
         }
-        .hero-sub {
-            font-size: 1.1rem;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 2.5rem;
-            line-height: 1.7;
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
-        .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-        .hero-cta .btn-lg { min-width: 180px; }
-        .btn-ghost {
-            background: rgba(255,255,255,0.15);
-            border: 1.5px solid rgba(255,255,255,0.4);
-            color: #fff;
-            backdrop-filter: blur(6px);
+        .nav-link-active {
+            background-color: var(--secondary, #f0fdf4);
+            color: var(--primary, #0284c7) !important;
         }
-        .btn-ghost:hover { background: rgba(255,255,255,0.25); color: #fff; transform: translateY(-2px); }
-
-        /* Hero stats */
-        .hero-stats {
-            display: flex; justify-content: center; gap: 3rem;
-            margin-top: 3.5rem;
-            flex-wrap: wrap;
-        }
-        .stat { text-align: center; }
-        .stat-num { font-size: 2rem; font-weight: 800; color: var(--secondary); line-height: 1; }
-        .stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.65); font-weight: 500; margin-top: 0.3rem; }
-
-        /* ── FEATURES ───────────────────────────────── */
-        .features-section { padding: 5rem 0; }
-        .section-header { text-align: center; margin-bottom: 3rem; }
-        .section-eyebrow {
-            display: inline-block;
-            background: var(--primary-light); color: var(--primary);
-            border-radius: 999px; padding: 0.3rem 1rem;
-            font-size: 0.78rem; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-        .section-title {
-            font-size: clamp(1.6rem, 3vw, 2.2rem);
-            font-weight: 800; color: var(--text-main);
-            letter-spacing: -0.5px; line-height: 1.25;
-        }
-        .section-desc { color: var(--text-muted); margin-top: 0.75rem; font-size: 1rem; max-width: 560px; margin-inline: auto; }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
-        .feature-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 2rem 1.5rem;
-            text-align: center;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: var(--grad-primary);
-            transform: scaleX(0);
-            transition: var(--transition);
-        }
-        .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--border-2); }
-        .feature-card:hover::before { transform: scaleX(1); }
-        .feature-icon {
-            width: 60px; height: 60px;
-            border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem;
-            margin: 0 auto 1.25rem;
-        }
-        .icon-blue  { background: #e8f4fd; }
-        .icon-gold  { background: #fff8e6; }
-        .icon-teal  { background: #e6f7f5; }
-        .icon-green { background: #ecfdf5; }
-        .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .feature-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; }
-
-        /* ── HOW IT WORKS ───────────────────────────── */
-        .steps-section { background: var(--surface); padding: 5rem 0; }
-        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
-        .step {
-            text-align: center;
-            position: relative;
-        }
-        .step-num {
-            width: 52px; height: 52px;
-            border-radius: 50%;
-            background: var(--grad-primary);
-            color: #fff;
-            font-size: 1.2rem; font-weight: 800;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 1rem;
-            box-shadow: 0 4px 16px rgba(10,110,189,0.3);
-        }
-        .step h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.4rem; }
-        .step p { color: var(--text-muted); font-size: 0.83rem; line-height: 1.55; }
-
-        /* ── CTA BANNER ─────────────────────────────── */
-        .cta-section {
-            background: var(--grad-hero);
-            padding: 4rem 0;
-            text-align: center;
-            color: #fff;
-        }
-        .cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.5px; }
-        .cta-section p { color: rgba(255,255,255,0.75); margin-bottom: 2rem; font-size: 1rem; }
-
-        /* ── FOOTER ─────────────────────────────────── */
-        footer {
-            background: #042b5f;
-            color: rgba(255,255,255,0.6);
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.82rem;
-        }
-        footer a { color: rgba(255,255,255,0.8); }
     </style>
 </head>
-<body>
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="index.html" class="logo">
-                <img src="assets/images/logo.png" alt="SmartCampus Logo" onerror="this.style.display='none'">
-                <div class="logo-text">
-                    <span class="name">SmartCampus</span>
-                    <span class="tagline">Complaint System</span>
+<body class="flex min-h-screen flex-col bg-background relative overflow-hidden pb-20 md:pb-0">
+
+    <!-- Subtle Geometric Ambient Background Accents -->
+    <div class="pointer-events-none absolute -left-20 top-10 text-primary opacity-20">
+        <svg class="animate-spin-slow h-[500px] w-[500px]" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="6 6"></circle>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"></circle>
+        </svg>
+    </div>
+    <div class="pointer-events-none absolute -right-20 top-1/3 h-96 w-96 rounded-full bg-primary/10 blur-3xl animate-float"></div>
+    <div class="pointer-events-none absolute bottom-10 left-1/3 h-72 w-72 rounded-full bg-secondary/40 blur-3xl animate-float-delayed"></div>
+
+    <div class="relative z-10 flex flex-1 flex-col">
+
+        <!-- ── HEADER / NAVIGATION ────────────────────────── -->
+        <header class="sticky top-0 z-50 border-b border-primary/10 bg-background/80 backdrop-blur-md">
+            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
+                <a class="flex items-center gap-3" href="index.html">
+                    <img src="assets/images/logo.png" alt="Smart Campus Logo" class="h-10 w-10 shrink-0 object-contain rounded-xl shadow-xs">
+                    <span class="font-display text-sm font-extrabold leading-tight text-primary sm:text-base">
+                        Smart Campus
+                        <span class="block text-xs font-normal text-muted-foreground">Complaint Portal</span>
+                    </span>
+                </a>
+
+                <nav class="hidden items-center gap-1 lg:flex">
+                    <a class="rounded-xl px-3 py-2 text-sm font-semibold text-primary bg-secondary/80 transition-colors" href="index.html">Home</a>
+                    <a href="#about" class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary">About</a>
+                    <a href="submit-complaint.html" class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary">Submit Complaint</a>
+                    <a href="track.html" class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary">Track Status</a>
+                    <a href="#support" class="rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-secondary/70 hover:text-primary">Support</a>
+                </nav>
+
+                <div class="flex items-center gap-2" id="navAuthSection">
+                    <a href="submit-complaint.html" class="items-center justify-center gap-2 whitespace-nowrap cursor-pointer transition-colors bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 text-xs hidden rounded-xl font-semibold sm:inline-flex">
+                        Report an issue
+                    </a>
+                    <a href="login.html" id="navLoginBtn" class="items-center justify-center gap-2 whitespace-nowrap cursor-pointer transition-colors border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 text-xs inline-flex rounded-xl font-semibold">
+                        Sign in
+                    </a>
                 </div>
+            </div>
+        </header>
+
+        <!-- ── MAIN CONTENT ──────────────────────────────── -->
+        <main class="flex-1">
+            <div class="mx-auto max-w-7xl px-4 py-8 md:px-8">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-12">
+
+                    <!-- HERO BANNER -->
+                    <section class="relative overflow-hidden rounded-[2.5rem] bg-secondary p-8 md:col-span-8 md:p-12 flex flex-col md:flex-row items-center gap-8 shadow-sm">
+                        <div class="relative z-10 flex-1">
+                            <div class="inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold mb-5 border-primary/30 bg-card/70 text-primary shadow-2xs">
+                                🛡️ Campus issue management
+                            </div>
+                            <h1 class="text-4xl font-extrabold tracking-tight text-primary md:text-6xl lg:text-7xl">
+                                <span id="typewriterText">Empowering your campus</span><span class="typewriter-cursor"></span>
+                            </h1>
+                            <p class="mt-6 max-w-md text-base md:text-lg font-medium text-foreground/75">
+                                The bridge between student voices and administrative excellence. Submit, track, and resolve campus problems in one confidential place.
+                            </p>
+                            <div class="mt-8 flex flex-wrap gap-4">
+                                <a href="submit-complaint.html" class="inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer transition-all bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:scale-[1.02] h-12 rounded-2xl px-7 text-base font-bold">
+                                    Start complaint 
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right ml-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                                </a>
+                                <a href="#how-it-works" class="inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer transition-all bg-background shadow-xs h-12 rounded-2xl border-2 border-primary px-7 text-base font-bold text-primary hover:bg-primary hover:text-primary-foreground">
+                                    How it works
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- HERO SLIDESHOW CAROUSEL -->
+                        <div class="relative z-10 w-full md:w-5/12">
+                            <div class="relative w-full rounded-2xl overflow-hidden shadow-xl aspect-square md:aspect-[4/5] bg-muted" id="heroCarousel">
+                                <div class="carousel-slide active w-full h-full">
+                                    <img src="assets/images/hero_slide_1.jpg" alt="Modern university campus" class="w-full h-full object-cover rounded-2xl">
+                                </div>
+                                <div class="carousel-slide w-full h-full">
+                                    <img src="assets/images/hero_slide_2.jpg" alt="Students studying in library" class="w-full h-full object-cover rounded-2xl">
+                                </div>
+                                <div class="carousel-slide w-full h-full">
+                                    <img src="assets/images/hero_slide_3.jpg" alt="Smart interactive classroom" class="w-full h-full object-cover rounded-2xl">
+                                </div>
+
+                                <!-- Carousel Controls -->
+                                <button id="carouselPrev" class="inline-flex items-center justify-center absolute h-9 w-9 rounded-full top-1/2 -translate-y-1/2 left-3 bg-background/80 backdrop-blur-md shadow-md text-foreground hover:bg-background transition-colors cursor-pointer" aria-label="Previous slide">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                                </button>
+                                <button id="carouselNext" class="inline-flex items-center justify-center absolute h-9 w-9 rounded-full top-1/2 -translate-y-1/2 right-3 bg-background/80 backdrop-blur-md shadow-md text-foreground hover:bg-background transition-colors cursor-pointer" aria-label="Next slide">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- QUICK STATS COLUMN -->
+                    <div class="grid grid-cols-1 gap-6 md:col-span-4 h-full">
+                        <!-- Resolution Rate Card -->
+                        <div class="group relative flex flex-col justify-between overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary to-primary/80 p-8 text-primary-foreground shadow-lg transition-transform duration-300 hover:scale-[1.02]">
+                            <div class="flex items-center justify-between z-10">
+                                <span class="text-xs font-bold uppercase tracking-widest text-primary-foreground/90 flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                                    Resolution Rate
+                                </span>
+                            </div>
+                            <div class="mt-6 flex items-center justify-between z-10">
+                                <div>
+                                    <span class="text-5xl font-black tracking-tight drop-shadow-md">92%</span>
+                                    <p class="mt-2 text-xs font-medium text-primary-foreground/90 max-w-[140px]">Of complaints closed within SLA targets.</p>
+                                </div>
+                                <div class="relative flex h-20 w-20 items-center justify-center">
+                                    <svg class="h-full w-full -rotate-90" viewBox="0 0 36 36">
+                                        <path class="stroke-white/20" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                        <path class="stroke-white" stroke-width="3.5" stroke-linecap="round" fill="none" stroke-dasharray="92, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute text-white drop-shadow-md"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avg Response Time Card -->
+                        <div class="group relative flex items-center justify-between overflow-hidden rounded-[2rem] border border-border/50 bg-card/70 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:border-primary/30 hover:bg-card">
+                            <div class="z-10">
+                                <p class="text-3xl font-black tracking-tight text-foreground flex items-baseline gap-1">18<span class="text-xl text-primary font-bold">h</span></p>
+                                <p class="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                                    Avg. response time
+                                </p>
+                            </div>
+                            <div class="relative z-10 flex h-13 w-13 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path></svg>
+                            </div>
+                        </div>
+
+                        <!-- Issues Resolved Today Card -->
+                        <div class="group flex items-center justify-between rounded-[2rem] border border-border/50 bg-card/70 p-6 shadow-sm backdrop-blur-xl transition-all duration-300 hover:border-primary/30 hover:bg-card">
+                            <div>
+                                <p class="text-3xl font-black tracking-tight text-foreground">24</p>
+                                <p class="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"></path></svg>
+                                    Issues resolved today
+                                </p>
+                            </div>
+                            <div class="flex -space-x-3">
+                                <span class="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 border-2 border-background bg-primary/20 text-primary font-bold text-xs items-center justify-center">JD</span>
+                                <span class="relative flex shrink-0 overflow-hidden rounded-full h-9 w-9 border-2 border-background bg-secondary text-primary font-bold text-xs items-center justify-center">JS</span>
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full border-2 border-background bg-primary text-xs font-bold text-primary-foreground z-10">+8</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LIVE FEED SECTION -->
+                    <section class="self-start rounded-[2.5rem] border border-border bg-card p-8 md:col-span-4 shadow-sm">
+                        <div class="mb-6 flex items-center justify-between">
+                            <h2 class="text-xl font-extrabold text-primary flex items-center gap-2">
+                                <span class="relative flex h-3 w-3">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                                </span>
+                                Live feed
+                            </h2>
+                            <span class="rounded-full bg-secondary px-3 py-1 text-xs font-bold text-primary">Active now</span>
+                        </div>
+                        <div class="space-y-5" id="liveFeedList">
+                            <div class="flex gap-4 items-start">
+                                <span class="h-10 w-1.5 shrink-0 rounded-full bg-amber-500 mt-1"></span>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-foreground truncate">Water leakage in Block B bathroom</p>
+                                    <p class="text-xs text-muted-foreground">In Progress • CMP-2026-10001</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="h-10 w-1.5 shrink-0 rounded-full bg-emerald-500 mt-1"></span>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-foreground truncate">Wi-Fi offline in Main Library</p>
+                                    <p class="text-xs text-muted-foreground">Resolved • CMP-2026-10002</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <span class="h-10 w-1.5 shrink-0 rounded-full bg-blue-500 mt-1"></span>
+                                <div class="min-w-0">
+                                    <p class="font-bold text-sm text-foreground truncate">No water supply in Hostel Block C</p>
+                                    <p class="text-xs text-muted-foreground">Pending • CMP-2026-10004</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="track.html" class="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline mt-6">
+                            Track a complaint →
+                        </a>
+                    </section>
+
+                    <!-- CATEGORIES GRID -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:col-span-8 md:grid-cols-3">
+                        <a href="submit-complaint.html?category=Classroom" class="group rounded-[2rem] border border-primary/20 bg-primary/5 p-6 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg">
+                            <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-card text-primary shadow-xs">
+                                🪑
+                            </span>
+                            <h3 class="text-lg font-bold text-primary group-hover:text-primary-foreground">Classroom</h3>
+                            <p class="mt-1 text-xs text-muted-foreground group-hover:text-primary-foreground/90">Broken furniture, projectors, boards or AC.</p>
+                        </a>
+
+                        <a href="submit-complaint.html?category=Electricity" class="group rounded-[2rem] border border-primary/20 bg-primary/5 p-6 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg">
+                            <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-card text-primary shadow-xs">
+                                💡
+                            </span>
+                            <h3 class="text-lg font-bold text-primary group-hover:text-primary-foreground">Electrical</h3>
+                            <p class="mt-1 text-xs text-muted-foreground group-hover:text-primary-foreground/90">Faulty lights, fans, sockets and wiring.</p>
+                        </a>
+
+                        <a href="submit-complaint.html?category=Water" class="group rounded-[2rem] border border-primary/20 bg-primary/5 p-6 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg">
+                            <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-card text-primary shadow-xs">
+                                💧
+                            </span>
+                            <h3 class="text-lg font-bold text-primary group-hover:text-primary-foreground">Water Supply</h3>
+                            <p class="mt-1 text-xs text-muted-foreground group-hover:text-primary-foreground/90">Leaks, no supply or unclean drinking water.</p>
+                        </a>
+
+                        <a href="submit-complaint.html?category=Cleaning" class="group rounded-[2rem] border border-primary/20 bg-primary/5 p-6 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg">
+                            <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-card text-primary shadow-xs">
+                                ✨
+                            </span>
+                            <h3 class="text-lg font-bold text-primary group-hover:text-primary-foreground">Cleanliness</h3>
+                            <p class="mt-1 text-xs text-muted-foreground group-hover:text-primary-foreground/90">Washrooms, corridors and waste collection.</p>
+                        </a>
+
+                        <a href="submit-complaint.html?category=Internet" class="group rounded-[2rem] border border-primary/20 bg-primary/5 p-6 transition-all hover:bg-primary hover:text-primary-foreground hover:shadow-lg">
+                            <span class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-card text-primary shadow-xs">
+                                📶
+                            </span>
+                            <h3 class="text-lg font-bold text-primary group-hover:text-primary-foreground">Wi-Fi / Internet</h3>
+                            <p class="mt-1 text-xs text-muted-foreground group-hover:text-primary-foreground/90">Dead zones, slow speed or login failures.</p>
+                        </a>
+
+                        <a href="submit-complaint.html" class="flex flex-col justify-between rounded-[2rem] bg-primary p-6 text-primary-foreground transition-all hover:shadow-xl">
+                            <div>
+                                <h3 class="text-lg font-bold">And more…</h3>
+                                <p class="text-xs opacity-90 mt-1">Hostel, Ragging, Welfare & 9 other campus categories.</p>
+                            </div>
+                            <span class="mt-4 inline-flex items-center gap-1 text-xs font-bold">
+                                Browse all 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                            </span>
+                        </a>
+
+                        <!-- How it works flow bar -->
+                        <div class="rounded-[2rem] bg-secondary p-8 sm:col-span-2 md:col-span-3 shadow-xs" id="how-it-works">
+                            <div class="flex flex-wrap items-center justify-between gap-6">
+                                <div>
+                                    <p class="text-xl font-bold text-primary">How it works</p>
+                                    <p class="text-xs font-medium text-foreground/70">Report → Auto-Route → Resolve → Feedback.</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span title="Submit form with location and evidence" class="flex h-10 w-10 items-center justify-center rounded-full bg-card font-bold text-primary shadow-xs">1</span>
+                                    <span class="hidden h-px w-6 bg-primary/30 sm:block"></span>
+                                    <span title="Routed to responsible department staff" class="flex h-10 w-10 items-center justify-center rounded-full bg-card font-bold text-primary shadow-xs">2</span>
+                                    <span class="hidden h-px w-6 bg-primary/30 sm:block"></span>
+                                    <span title="Staff fixes the issue and updates status" class="flex h-10 w-10 items-center justify-center rounded-full bg-card font-bold text-primary shadow-xs">3</span>
+                                    <span class="hidden h-px w-6 bg-primary/30 sm:block"></span>
+                                    <span title="You get notified and rate the resolution" class="flex h-10 w-10 items-center justify-center rounded-full bg-card font-bold text-primary shadow-xs">4</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PHOTO SHOWCASE: SEE THE PORTAL IN ACTION -->
+                    <section class="grid grid-cols-2 gap-4 self-start rounded-[2.5rem] border border-border bg-card p-6 md:col-span-5 shadow-sm">
+                        <img src="assets/images/campus-report-BX5nj4YF.jpg" alt="Student reporting issue with evidence" loading="lazy" class="h-44 w-full rounded-[1.5rem] object-cover shadow-xs">
+                        <img src="assets/images/campus-maintenance-Cym09RXn.jpg" alt="Maintenance team resolving problem" loading="lazy" class="h-44 w-full rounded-[1.5rem] object-cover shadow-xs">
+                        <div class="col-span-2 pt-2">
+                            <h2 class="text-xl font-extrabold text-primary">See the portal in action</h2>
+                            <p class="mt-1 text-xs text-muted-foreground">From spotting an issue on campus to a verified resolution.</p>
+                        </div>
+                    </section>
+
+                    <!-- BUILT-IN FEATURES GRID -->
+                    <section class="rounded-[2.5rem] bg-secondary/60 p-8 md:col-span-7 shadow-sm">
+                        <h2 class="text-xl font-extrabold text-primary">Built-in features</h2>
+                        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">📋</span>
+                                <h3 class="mt-2 font-bold text-sm">Category-based reporting</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Campus categories ensure the right staff receives the ticket instantly.</p>
+                            </div>
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">📸</span>
+                                <h3 class="mt-2 font-bold text-sm">Photo & video evidence</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Attach images so staff can inspect the exact problem before arriving.</p>
+                            </div>
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">🔔</span>
+                                <h3 class="mt-2 font-bold text-sm">Status notifications</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Live updates the moment your complaint moves to In Progress or Resolved.</p>
+                            </div>
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">📊</span>
+                                <h3 class="mt-2 font-bold text-sm">Analytics dashboard</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Department heads track average response times, hotspots, and SLA health.</p>
+                            </div>
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">⚡</span>
+                                <h3 class="mt-2 font-bold text-sm">Automated SLA escalation</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Overdue complaints automatically escalate to senior administrators.</p>
+                            </div>
+                            <div class="rounded-[1.5rem] bg-card p-5 shadow-xs">
+                                <span class="text-2xl">🔒</span>
+                                <h3 class="mt-2 font-bold text-sm">100% Confidential option</h3>
+                                <p class="mt-1 text-xs text-muted-foreground">Raise sensitive harassment or ragging concerns with protected anonymity.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- BOTTOM CTA BANNER -->
+                    <section class="relative overflow-hidden rounded-[2.5rem] bg-primary p-10 text-center text-primary-foreground md:col-span-12 shadow-lg">
+                        <h2 class="text-3xl font-extrabold">Something broken on campus?</h2>
+                        <p class="mx-auto mt-2 max-w-lg text-sm opacity-90">It takes under a minute to report. You'll receive a tracking number you can follow in real time.</p>
+                        <a href="submit-complaint.html" class="inline-flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer transition-transform hover:scale-105 bg-background text-primary shadow-md h-12 mt-6 rounded-2xl px-8 text-base font-bold">
+                            Report an issue now →
+                        </a>
+                    </section>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- ── FOOTER ────────────────────────────────────── -->
+        <footer class="mt-16 border-t border-border bg-card" id="support">
+            <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <img src="assets/images/logo.png" alt="Logo" class="h-8 w-8 object-contain">
+                        <span class="font-bold text-sm text-primary">Smart Campus Portal</span>
+                    </div>
+                    <p class="mt-3 text-xs text-muted-foreground leading-relaxed">
+                        One unified place for students, faculty, and administrators to report campus issues and follow them through to verified resolution.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-foreground">Portal Navigation</h4>
+                    <ul class="mt-3 space-y-2 text-xs text-muted-foreground">
+                        <li><a href="submit-complaint.html" class="hover:text-primary transition-colors">Submit a complaint</a></li>
+                        <li><a href="track.html" class="hover:text-primary transition-colors">Track status</a></li>
+                        <li><a href="login.html" class="hover:text-primary transition-colors">Student Login</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-foreground">Administration</h4>
+                    <ul class="mt-3 space-y-2 text-xs text-muted-foreground">
+                        <li><a href="login.html" class="hover:text-primary transition-colors">Staff / Admin login</a></li>
+                        <li><a href="admin-dashboard.html" class="hover:text-primary transition-colors">Admin Dashboard</a></li>
+                        <li><a href="staff-dashboard.html" class="hover:text-primary transition-colors">Department Resolution</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-foreground">Helpdesk Contact</h4>
+                    <ul class="mt-3 space-y-2 text-xs text-muted-foreground">
+                        <li class="flex items-center gap-2">✉️ helpdesk@campus.edu</li>
+                        <li class="flex items-center gap-2">📞 +91 90000 12345</li>
+                        <li class="flex items-center gap-2">📍 Admin Block, Room 12</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-border py-4 text-center text-xs text-muted-foreground">
+                © 2026 Smart Campus Complaint Portal. All rights reserved.
+            </div>
+        </footer>
+
+        <!-- ── MOBILE BOTTOM NAVIGATION BAR ──────────────── -->
+        <div class="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around border-t border-border bg-background/90 px-2 py-3 backdrop-blur-md md:hidden">
+            <a class="flex flex-col items-center justify-center rounded-xl p-1 text-primary" href="index.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span class="text-[10px] font-semibold mt-0.5">Home</span>
             </a>
-            <div class="navbar-actions">
-                <button id="theme-toggle" class="theme-toggle">🌙</button>
-                <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
-                <a href="register.html" class="btn btn-primary btn-sm">Register</a>
-            </div>
+            <a class="flex flex-col items-center justify-center rounded-xl p-1 text-muted-foreground hover:text-primary" href="submit-complaint.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+                <span class="text-[10px] font-semibold mt-0.5">Report</span>
+            </a>
+            <a class="flex flex-col items-center justify-center rounded-xl p-1 text-muted-foreground hover:text-primary" href="track.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+                <span class="text-[10px] font-semibold mt-0.5">Track</span>
+            </a>
+            <a class="flex flex-col items-center justify-center rounded-xl p-1 text-muted-foreground hover:text-primary" href="login.html" id="mobileAuthLink">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span class="text-[10px] font-semibold mt-0.5">Account</span>
+            </a>
         </div>
-    </nav>
 
-    <!-- HERO -->
-    <section class="hero-section">
-        <div class="hero-inner">
-            <div class="hero-pill">
-                <span></span> Secure & Confidential Platform
-            </div>
-            <h1 class="hero-title">
-                Report. Track.<br>
-                <span class="highlight">Resolve.</span>
-            </h1>
-            <p class="hero-sub">
-                A smart, secure platform that empowers students to voice campus concerns confidentially — routed to the right department, resolved on time.
-            </p>
-            <div class="hero-cta">
-                <a href="login.html" class="btn btn-gold btn-lg">🚀 Report an Issue</a>
-                <a href="track.html" class="btn btn-ghost btn-lg">🔍 Track Complaint</a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Confidential</div></div>
-                <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Available</div></div>
-                <div class="stat"><div class="stat-num">Auto</div><div class="stat-label">Escalation</div></div>
-                <div class="stat"><div class="stat-num">Live</div><div class="stat-label">Tracking</div></div>
-            </div>
-        </div>
-    </section>
+    </div>
 
-    <!-- FEATURES -->
-    <section class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-eyebrow">Why SmartCampus?</span>
-                <h2 class="section-title">Everything you need to resolve campus issues</h2>
-                <p class="section-desc">Built for students, managed by staff — our platform makes campus life better.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon icon-blue">🔒</div>
-                    <h3>Confidential Reporting</h3>
-                    <p>Your identity is protected and only shared with authorized personnel when absolutely necessary.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon icon-gold">⚡</div>
-                    <h3>Fast Resolution</h3>
-                    <p>Complaints are automatically routed to the right department for immediate priority action.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon icon-teal">📡</div>
-                    <h3>Real-time Tracking</h3>
-                    <p>Track the exact status of your complaint at any time — no more chasing people down.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon icon-green">⏰</div>
-                    <h3>Auto Escalation</h3>
-                    <p>SLA-based escalation ensures no complaint is forgotten — management gets notified automatically.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- ── JAVASCRIPT: CAROUSEL, TYPEWRITER, AUTH SYNC ── -->
+    <script src="js/api/api.js"></script>
+    <script>
+        // 1. Interactive Slideshow Carousel
+        const slides = document.querySelectorAll('.carousel-slide');
+        let currentSlide = 0;
+        function showSlide(index) {
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === index);
+            });
+        }
+        document.getElementById('carouselNext')?.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+        document.getElementById('carouselPrev')?.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+        // Auto-advance carousel every 4.5 seconds
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 4500);
 
-    <!-- HOW IT WORKS -->
-    <section class="steps-section">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-eyebrow">Simple Process</span>
-                <h2 class="section-title">How it works</h2>
-            </div>
-            <div class="steps-grid">
-                <div class="step">
-                    <div class="step-num">1</div>
-                    <h4>Submit a Complaint</h4>
-                    <p>Login, fill in the complaint form with details, category, and attach evidence.</p>
-                </div>
-                <div class="step">
-                    <div class="step-num">2</div>
-                    <h4>Auto-Routing</h4>
-                    <p>The system assigns priority and routes your complaint to the correct department.</p>
-                </div>
-                <div class="step">
-                    <div class="step-num">3</div>
-                    <h4>Track Progress</h4>
-                    <p>Monitor status updates in real-time using your complaint number or tracking code.</p>
-                </div>
-                <div class="step">
-                    <div class="step-num">4</div>
-                    <h4>Resolution & Feedback</h4>
-                    <p>Get notified on resolution and share feedback to improve the system.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        // 2. Typewriter Effect
+        const phrases = [
+            "Empowering your campus.",
+            "Confidential issue resolution.",
+            "Fast, transparent tracking."
+        ];
+        let pIndex = 0;
+        let cIndex = 0;
+        let isDeleting = false;
+        const typewriterEl = document.getElementById('typewriterText');
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Ready to make your campus better?</h2>
-            <p>Join thousands of students using SmartCampus to resolve issues faster.</p>
-            <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-                <a href="register.html" class="btn btn-gold btn-lg">Create Free Account</a>
-                <a href="login.html" class="btn btn-ghost btn-lg">Login to Dashboard</a>
-            </div>
-        </div>
-    </section>
+        function type() {
+            const current = phrases[pIndex];
+            if (isDeleting) {
+                cIndex--;
+                typewriterEl.textContent = current.substring(0, cIndex);
+            } else {
+                cIndex++;
+                typewriterEl.textContent = current.substring(0, cIndex);
+            }
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2026 SmartCampus Complaint System · Built for a better campus experience</p>
-    </footer>
+            let speed = isDeleting ? 40 : 80;
+            if (!isDeleting && cIndex === current.length) {
+                speed = 2200; // Pause at end
+                isDeleting = true;
+            } else if (isDeleting && cIndex === 0) {
+                isDeleting = false;
+                pIndex = (pIndex + 1) % phrases.length;
+                speed = 400;
+            }
+            setTimeout(type, speed);
+        }
+        type();
 
-    <div class="toast-container" id="toast-container"></div>
-    <script src="js/utils/theme.js"></script>
+        // 3. User Authentication State in Navbar
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    const navAuthSection = document.getElementById('navAuthSection');
+                    const role = user.role?.name || user.role || 'STUDENT';
+                    let dashUrl = 'student-dashboard.html';
+                    if (role === 'ADMIN') dashUrl = 'admin-dashboard.html';
+                    else if (role === 'STAFF' || role === 'DEPARTMENT_HEAD' || role === 'SAFETY_OFFICER') dashUrl = 'staff-dashboard.html';
+
+                    if (navAuthSection) {
+                        navAuthSection.innerHTML = `
+                            <a href="${dashUrl}" class="items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer transition-colors bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 h-9 px-4 text-xs inline-flex rounded-xl font-semibold">
+                                Dashboard (${user.name ? user.name.split(' ')[0] : 'My Account'})
+                            </a>
+                            <button onclick="localStorage.clear(); window.location.reload();" class="text-xs text-muted-foreground hover:text-foreground px-2 py-1 cursor-pointer">
+                                Logout
+                            </button>
+                        `;
+                    }
+                    const mobileAuth = document.getElementById('mobileAuthLink');
+                    if (mobileAuth) mobileAuth.href = dashUrl;
+                } catch(e) {}
+            }
+        });
+    </script>
 </body>
 </html>
