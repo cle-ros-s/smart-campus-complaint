@@ -18,7 +18,7 @@ public class InvestigationController {
 
     @GetMapping("/reporter/{complaintId}")
     @PreAuthorize("hasAuthority('VIEW_REPORTER_IDENTITY')")
-    public ResponseEntity<?> getReporterIdentity(@PathVariable Long id) {
+    public ResponseEntity<?> getReporterIdentity(@PathVariable String id) {
         Complaint complaint = complaintRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));
         
@@ -29,7 +29,7 @@ public class InvestigationController {
     
     @PostMapping("/{complaintId}/notes")
     @PreAuthorize("hasRole('SAFETY_OFFICER')")
-    public ResponseEntity<?> addInvestigationNotes(@PathVariable Long complaintId, @RequestBody String notes) {
+    public ResponseEntity<?> addInvestigationNotes(@PathVariable String complaintId, @RequestBody String notes) {
         return ResponseEntity.ok(new MessageResponse("Notes added successfully to investigation"));
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class ComplaintResponse {
-    private Long id;
+    private String id;
     private String complaintNumber;
     private String categoryName;
     private String departmentName;

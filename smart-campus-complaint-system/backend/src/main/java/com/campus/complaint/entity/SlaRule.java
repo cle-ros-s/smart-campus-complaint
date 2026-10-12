@@ -1,21 +1,19 @@
 package com.campus.complaint.entity;
 
 import com.campus.complaint.enums.Priority;
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name = "sla_rules")
+@Document(collection = "sla_rules")
 public class SlaRule {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private Priority priority;
 
-    @Column(name = "resolution_time_hours", nullable = false)
     private Integer resolutionTimeHours;
 }

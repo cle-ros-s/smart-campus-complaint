@@ -1052,7 +1052,7 @@ async function openComplaintModal(c) {
                 <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;">
                     ${attachments.map(a => {
                         const isImage = (a.fileType || '').startsWith('image/');
-                        const viewUrl = `http://localhost:8080/api/attachments/view/${a.filePath}`;
+                        const viewUrl = `${API_BASE}/attachments/view/${a.filePath}`;
                         if (isImage) {
                             return `<a href="${viewUrl}" target="_blank" title="${a.fileName}" style="display:block;">
                                 <img src="${viewUrl}"

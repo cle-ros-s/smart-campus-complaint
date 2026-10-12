@@ -1,31 +1,27 @@
 package com.campus.complaint.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "feedback")
+@Document(collection = "feedback")
 public class Feedback {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @OneToOne
-    @JoinColumn(name = "complaint_id", nullable = false, unique = true)
+    @DBRef
     private Complaint complaint;
 
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @DBRef
     private User student;
 
-    @Column(nullable = false)
     private Integer rating; // 1 to 5
 
-    @Column(columnDefinition = "TEXT")
     private String comment;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

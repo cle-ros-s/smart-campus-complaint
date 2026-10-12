@@ -1,52 +1,44 @@
 package com.campus.complaint.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "users")
+@Document(collection = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private String email;
 
-    @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(name = "college_id", unique = true)
+    @Indexed(unique = true)
     private String collegeId;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
+    @DBRef
     private Department department;
 
     private Integer year;
 
     private String section;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @DBRef
     private Role role;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

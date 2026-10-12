@@ -10,7 +10,7 @@ import java.util.List;
 public interface ComplaintService {
     ComplaintResponse submitComplaint(ComplaintRequest request, String studentEmail);
     
-    ComplaintFullResponse getComplaintById(Long id, String email);
+    ComplaintFullResponse getComplaintById(String id, String email);
     
     ComplaintResponse getComplaintByTracking(String complaintNumber, String trackingCode);
     
@@ -18,7 +18,7 @@ public interface ComplaintService {
     
     List<ComplaintResponse> getStaffComplaints(String email);
     
-    ComplaintResponse updateStatus(Long id, ComplaintStatusUpdateRequest request, String email);
+    ComplaintResponse updateStatus(String id, ComplaintStatusUpdateRequest request, String email);
     
-    void uploadEvidence(Long complaintId, MultipartFile[] files, String email);
+    void uploadEvidence(String complaintId, MultipartFile[] files, String email);
 }

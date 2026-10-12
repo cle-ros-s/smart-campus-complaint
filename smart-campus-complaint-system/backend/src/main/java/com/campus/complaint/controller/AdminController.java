@@ -54,7 +54,7 @@ public class AdminController {
 
     /** DELETE /api/admin/users/{id} — delete a user */
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
         if (!userRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -64,7 +64,7 @@ public class AdminController {
 
     /** PATCH /api/admin/users/{id}/role — change user role */
     @PatchMapping("/users/{id}/role")
-    public ResponseEntity<?> changeUserRole(@PathVariable Long id, @RequestBody Map<String, String> body) {
+    public ResponseEntity<?> changeUserRole(@PathVariable String id, @RequestBody Map<String, String> body) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         String roleName = body.get("role");

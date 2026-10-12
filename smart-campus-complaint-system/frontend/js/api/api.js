@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = window.API_BASE_URL || localStorage.getItem('API_BASE_URL') || 'http://localhost:8080/api';
 
 function getToken() {
     return localStorage.getItem('jwt');

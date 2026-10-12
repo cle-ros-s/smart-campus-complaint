@@ -1,32 +1,28 @@
 package com.campus.complaint.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "escalations")
+@Document(collection = "escalations")
 public class Escalation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "complaint_id", nullable = false)
+    @DBRef
     private Complaint complaint;
 
-    @ManyToOne
-    @JoinColumn(name = "escalated_from")
+    @DBRef
     private User escalatedFrom;
 
-    @ManyToOne
-    @JoinColumn(name = "escalated_to")
+    @DBRef
     private User escalatedTo;
 
-    @Column(columnDefinition = "TEXT")
     private String reason;
 
-    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 }

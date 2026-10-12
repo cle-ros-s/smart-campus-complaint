@@ -46,7 +46,7 @@ public class AttachmentController {
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<?> uploadFile(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("complaintId") Long complaintId,
+            @RequestParam("complaintId") String complaintId,
             Authentication authentication) {
 
         // Validate file
@@ -107,7 +107,7 @@ public class AttachmentController {
      * Get all attachments for a specific complaint.
      */
     @GetMapping("/complaint/{complaintId}")
-    public ResponseEntity<List<Attachment>> getAttachmentsByComplaint(@PathVariable Long complaintId) {
+    public ResponseEntity<List<Attachment>> getAttachmentsByComplaint(@PathVariable String complaintId) {
         List<Attachment> attachments = attachmentRepository.findByComplaintId(complaintId);
         return ResponseEntity.ok(attachments);
     }

@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class ComplaintRequest {
     @NotNull
-    private Long categoryId;
+    private String categoryId;
 
     @NotBlank
     private String description;

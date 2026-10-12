@@ -24,7 +24,7 @@ public class SignupRequest {
 
     private String collegeId;
 
-    private Long departmentId;
+    private String departmentId;
 
     private Integer year;
 

@@ -11,7 +11,6 @@ import com.campus.complaint.service.ComplaintService;
 import com.campus.complaint.storage.MediaStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,6 @@ public class ComplaintServiceImpl implements ComplaintService {
     MediaStorageService mediaStorageService;
 
     @Override
-    @Transactional
     public ComplaintResponse submitComplaint(ComplaintRequest request, String studentEmail) {
         User student = userRepository.findByEmail(studentEmail)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
@@ -68,7 +66,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public ComplaintFullResponse getComplaintById(Long id, String email) {
+    public ComplaintFullResponse getComplaintById(String id, String email) {
         Complaint complaint = complaintRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Complaint not found"));
         
@@ -99,8 +97,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    @Transactional
-    public ComplaintResponse updateStatus(Long id, ComplaintStatusUpdateRequest request, String email) {
+    public ComplaintResponse updateStatus(String id, ComplaintStatusUpdateRequest request, String email) {
         User user = userRepository.findByEmail(email).orElseThrow();
         Complaint complaint = complaintRepository.findById(id).orElseThrow();
         
@@ -121,7 +118,7 @@ public class ComplaintServiceImpl implements ComplaintService {
     }
 
     @Override
-    public void uploadEvidence(Long complaintId, MultipartFile[] files, String email) {
+    public void uploadEvidence(String complaintId, MultipartFile[] files, String email) {
         // Implementation for multiple files
     }
     

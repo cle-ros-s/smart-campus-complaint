@@ -48,7 +48,7 @@ public class ComplaintController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getComplaintById(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<?> getComplaintById(@PathVariable String id, Authentication authentication) {
         // Simple implementation, in a real app would check if user has rights to view identity
         return ResponseEntity.ok(complaintService.getComplaintById(id, authentication.getName()));
     }
@@ -56,7 +56,7 @@ public class ComplaintController {
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('STAFF') or hasRole('ADMIN') or hasRole('DEPARTMENT_HEAD')")
     public ResponseEntity<?> updateStatus(
-            @PathVariable Long id,
+            @PathVariable String id,
             @Valid @RequestBody ComplaintStatusUpdateRequest request,
             Authentication authentication) {
         return ResponseEntity.ok(complaintService.updateStatus(id, request, authentication.getName()));

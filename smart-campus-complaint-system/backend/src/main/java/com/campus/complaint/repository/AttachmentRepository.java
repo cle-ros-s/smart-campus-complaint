@@ -1,9 +1,10 @@
 package com.campus.complaint.repository;
 
 import com.campus.complaint.entity.Attachment;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
+
 import java.util.List;
 
-public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
-    List<Attachment> findByComplaintId(Long complaintId);
+public interface AttachmentRepository extends MongoRepository<Attachment, String> {
+    List<Attachment> findByComplaintId(String complaintId);
 }

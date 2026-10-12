@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +30,6 @@ public class EscalationScheduler {
 
     // Runs every hour to check for overdue complaints
     @Scheduled(fixedRate = 3600000)
-    @Transactional
     public void checkAndEscalateOverdueComplaints() {
         logger.info("Running scheduled escalation check...");
 

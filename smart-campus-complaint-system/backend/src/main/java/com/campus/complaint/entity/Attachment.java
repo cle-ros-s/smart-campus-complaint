@@ -1,40 +1,33 @@
 package com.campus.complaint.entity;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "attachments")
+@Document(collection = "attachments")
 public class Attachment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "complaint_id", nullable = false)
+    @DBRef
     private Complaint complaint;
 
-    @Column(name = "file_name", nullable = false)
     private String fileName;
 
-    @Column(name = "stored_file_name", nullable = false)
     private String storedFileName;
 
-    @Column(name = "file_type")
     private String fileType;
 
-    @Column(name = "file_size")
     private Long fileSize;
 
-    @Column(name = "file_path", nullable = false)
     private String filePath;
 
-    @ManyToOne
-    @JoinColumn(name = "uploaded_by")
+    @DBRef
     private User uploadedBy;
 
-    @Column(name = "uploaded_at", updatable = false)
     private LocalDateTime uploadedAt = LocalDateTime.now();
 }

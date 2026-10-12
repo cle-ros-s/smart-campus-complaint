@@ -1,0 +1,7 @@
+target/
+*.txt
+.mvn/
+mvnw
+mvnw.cmd
+.git
+.gitignore

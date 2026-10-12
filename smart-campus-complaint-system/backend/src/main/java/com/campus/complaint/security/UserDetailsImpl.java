@@ -13,15 +13,15 @@ import java.util.Objects;
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private String id;
     private String email;
     @JsonIgnore
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
-    private Long departmentId;
+    private String departmentId;
 
-    public UserDetailsImpl(Long id, String email, String password,
-                           Collection<? extends GrantedAuthority> authorities, Long departmentId) {
+    public UserDetailsImpl(String id, String email, String password,
+                           Collection<? extends GrantedAuthority> authorities, String departmentId) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -40,11 +40,11 @@ public class UserDetailsImpl implements UserDetails {
                 user.getDepartment() != null ? user.getDepartment().getId() : null);
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public Long getDepartmentId() {
+    public String getDepartmentId() {
         return departmentId;
     }
 
