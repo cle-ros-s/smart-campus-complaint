@@ -22,6 +22,14 @@ public class ComplaintController {
     @Autowired
     ComplaintService complaintService;
 
+    @Autowired
+    com.campus.complaint.repository.ComplaintCategoryRepository categoryRepository;
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getCategories() {
+        return ResponseEntity.ok(categoryRepository.findAll());
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('STUDENT')")
     public ResponseEntity<?> submitComplaint(@Valid @RequestBody ComplaintRequest request, Authentication authentication) {

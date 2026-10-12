@@ -509,10 +509,10 @@
                 try {
                     const user = JSON.parse(userStr);
                     const navAuthSection = document.getElementById('navAuthSection');
-                    const role = user.role?.name || user.role || 'STUDENT';
+                    const roles = user.roles || (user.role ? [user.role] : []);
                     let dashUrl = 'student-dashboard.html';
-                    if (role === 'ADMIN') dashUrl = 'admin-dashboard.html';
-                    else if (role === 'STAFF' || role === 'DEPARTMENT_HEAD' || role === 'SAFETY_OFFICER') dashUrl = 'staff-dashboard.html';
+                    if (roles.includes('ROLE_ADMIN') || roles.includes('ADMIN')) dashUrl = 'admin-dashboard.html';
+                    else if (roles.some(r => r.includes('STAFF') || r.includes('DEPARTMENT_HEAD') || r.includes('SAFETY_OFFICER'))) dashUrl = 'staff-dashboard.html';
 
                     if (navAuthSection) {
                         navAuthSection.innerHTML = `

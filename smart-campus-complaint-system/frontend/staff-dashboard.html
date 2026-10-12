@@ -244,7 +244,7 @@
                         <span>📍 ${c.location || '—'}</span>
                         <span>🏢 ${c.departmentName || 'Not assigned'}</span>
                         <span>📅 ${date}</span>
-                        <button class="btn btn-secondary btn-sm" onclick='openModal(${JSON.stringify(c)})' style="margin-left:auto; padding:0.25rem 0.75rem; font-size:0.8rem;">Update Status</button>
+                        <button class="btn btn-secondary btn-sm" onclick="openModalById('${c.id}')" style="margin-left:auto; padding:0.25rem 0.75rem; font-size:0.8rem;">Update Status</button>
                     </div>
                 </div>`;
             }).join('');
@@ -297,6 +297,11 @@
             `;
             
             document.getElementById('status-modal').style.display = 'block';
+        }
+
+        function openModalById(id) {
+            const complaint = allComplaints.find(c => String(c.id) === String(id));
+            if (complaint) openModal(complaint);
         }
 
         function closeModal() {

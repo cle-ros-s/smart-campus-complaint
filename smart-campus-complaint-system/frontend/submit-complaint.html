@@ -355,13 +355,45 @@
             document.getElementById('upload-progress').style.display = 'none';
         }
 
+        // ── Load Categories Dynamically ────────────────────────────────
+        async function loadCategories() {
+            const select = document.getElementById('category');
+            const urlCategory = new URLSearchParams(window.location.search).get('category');
+            try {
+                const categories = await api.getCategories();
+                if (Array.isArray(categories) && categories.length > 0) {
+                    select.innerHTML = '<option value="">-- Select a Category --</option>';
+                    categories.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.id || c.name;
+                        opt.textContent = c.name;
+                        if (urlCategory && c.name.toLowerCase().includes(urlCategory.toLowerCase())) {
+                            opt.selected = true;
+                        }
+                        select.appendChild(opt);
+                    });
+                }
+            } catch (err) {
+                console.warn('Could not load categories dynamically, using pre-filled:', err);
+                if (urlCategory) {
+                    for (let opt of select.options) {
+                        if (opt.text.toLowerCase().includes(urlCategory.toLowerCase())) {
+                            opt.selected = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        loadCategories();
+
         document.getElementById('complaint-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             const errEl = document.getElementById('error-msg');
             errEl.style.display = 'none';
 
-            const categoryId = parseInt(document.getElementById('category').value);
+            const categoryId = document.getElementById('category').value.trim();
             const description = document.getElementById('description').value.trim();
             const location = document.getElementById('location').value.trim();
             const priority = document.getElementById('priority').value;

@@ -50,6 +50,11 @@ const api = {
             body: JSON.stringify(payload)
         }).then(handleResponse),
 
+    getCategories: () =>
+        fetch(`${API_BASE}/complaints/categories`, {
+            headers: getHeaders(false)
+        }).then(handleResponse),
+
     getMyComplaints: () =>
         fetch(`${API_BASE}/complaints/my`, {
             headers: getHeaders()

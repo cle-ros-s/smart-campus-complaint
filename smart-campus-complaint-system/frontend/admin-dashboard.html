@@ -999,7 +999,7 @@ function renderComplaintCards() {
         const sc = STATUS_COLORS[c.status] || '#6b7280';
         const pc = PRIORITY_COLORS[c.priority] || '#6b7280';
         return `
-        <div class="complaint-row" onclick='openComplaintModal(${JSON.stringify(c)})'>
+        <div class="complaint-row" onclick="openComplaintModalById('${c.id}')">
             <div class="complaint-row-left">
                 <div class="complaint-num">${c.complaintNumber || '#'+c.id}</div>
                 <div class="complaint-desc">${c.description||'No description'}</div>
@@ -1013,7 +1013,7 @@ function renderComplaintCards() {
             <div class="complaint-row-right">
                 <span class="status-badge" style="background:${sc}22;color:${sc};">${(c.status||'').replace(/_/g,' ')}</span>
                 <span class="status-badge" style="background:${pc}22;color:${pc};">${c.priority||'—'}</span>
-                <button class="btn btn-primary btn-xs" onclick="event.stopPropagation();openComplaintModal(${JSON.stringify(c).replace(/"/g,'&quot;')})">Manage</button>
+                <button class="btn btn-primary btn-xs" onclick="event.stopPropagation();openComplaintModalById('${c.id}')">Manage</button>
             </div>
         </div>`;
     }).join('');
@@ -1021,6 +1021,10 @@ function renderComplaintCards() {
 
 // Complaint Modal
 let activeCId = null;
+function openComplaintModalById(id) {
+    const c = allComplaints.find(item => String(item.id) === String(id));
+    if (c) openComplaintModal(c);
+}
 async function openComplaintModal(c) {
     activeCId = c.id;
     document.getElementById('cm-title').textContent = `Manage Complaint ${c.complaintNumber||'#'+c.id}`;
@@ -1141,8 +1145,8 @@ function renderUsersTable() {
             <td>${u.phoneNumber||'—'}</td>
             <td>
                 <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
-                    <button class="btn btn-secondary btn-xs" onclick="openRoleModal(${u.id},'${u.name||u.email}','${u.role}')">✏️ Role</button>
-                    <button class="btn btn-danger btn-xs" onclick="openDeleteModal(${u.id},'${u.name||u.email}')">🗑️</button>
+                    <button class="btn btn-secondary btn-xs" onclick="openRoleModalById('${u.id}')">✏️ Role</button>
+                    <button class="btn btn-danger btn-xs" onclick="openDeleteModalById('${u.id}')">🗑️</button>
                 </div>
             </td>
         </tr>`;
@@ -1151,6 +1155,14 @@ function renderUsersTable() {
 
 // Role Modal
 let activeUserId = null;
+function openRoleModalById(id) {
+    const u = allUsers.find(item => String(item.id) === String(id));
+    if (u) openRoleModal(u.id, u.name || u.email, u.role);
+}
+function openDeleteModalById(id) {
+    const u = allUsers.find(item => String(item.id) === String(id));
+    if (u) openDeleteModal(u.id, u.name || u.email);
+}
 function openRoleModal(id, name, currentRole) {
     activeUserId = id;
     document.getElementById('rm-user-name').textContent = name;

@@ -43,7 +43,12 @@ public class ComplaintServiceImpl implements ComplaintService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
         ComplaintCategory category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .or(() -> categoryRepository.findByName(request.getCategoryId()))
+                .orElseGet(() -> categoryRepository.findAll().stream()
+                        .filter(c -> c.getName() != null && c.getName().equalsIgnoreCase(request.getCategoryId()))
+                        .findFirst()
+                        .orElseGet(() -> categoryRepository.findAll().stream().findFirst()
+                                .orElseThrow(() -> new RuntimeException("No categories available in the system"))));
 
         Complaint complaint = new Complaint();
         complaint.setComplaintNumber(generateComplaintNumber());

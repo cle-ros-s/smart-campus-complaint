@@ -62,10 +62,16 @@ function statusBadge(status) {
         RESOLVED: '#10B981',
         CLOSED: '#6B7280',
         REJECTED: '#EF4444',
-        CRITICAL: '#EF4444'
+        CRITICAL: '#EF4444',
+        HIGH: '#EF4444',
+        MEDIUM: '#F59E0B',
+        LOW: '#10B981',
+        ASSIGNED: '#3B82F6',
+        ESCALATED: '#7C3AED',
+        REOPENED: '#EC4899'
     };
     const color = colors[status] || '#6B7280';
-    return `<span style="background:${color}22;color:${color};padding:0.2rem 0.75rem;border-radius:999px;font-size:0.78rem;font-weight:600;">${status?.replace('_', ' ')}</span>`;
+    return `<span style="background:${color}22;color:${color};padding:0.2rem 0.75rem;border-radius:999px;font-size:0.78rem;font-weight:600;">${(status || '').replace(/_/g, ' ')}</span>`;
 }
 
 // ─── Dynamic Profile Modal Listener ──────────────────────────────────
