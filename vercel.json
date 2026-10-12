@@ -1,0 +1,13 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/smart-campus-complaint-system/frontend/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/smart-campus-complaint-system/frontend/$1"
+    }
+  ]
+}
